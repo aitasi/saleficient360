@@ -1,0 +1,72 @@
+<odoo>
+    <record id="action_report_sales_route_facilitation_form" model="ir.actions.report">
+        <field name="name">Facilitation Form</field>
+        <field name="model">sales.route.facilitation.form</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">field_sales_route_plan.report_sales_route_facilitation_form</field>
+        <field name="report_file">field_sales_route_plan.report_sales_route_facilitation_form</field>
+        <field name="binding_model_id" ref="model_sales_route_facilitation_form"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Facilitation Form - %s' % (object.name)</field>
+    </record>
+
+    <template id="report_sales_route_facilitation_form">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Daily Route Facilitation Form</h2>
+                        <table class="table table-sm o_main_table">
+                            <tr>
+                                <td><strong>Reference</strong></td><td><span t-field="o.name"/></td>
+                                <td><strong>Date</strong></td><td><span t-field="o.plan_date"/></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Supervisor</strong></td><td><span t-field="o.supervisor_id"/></td>
+                                <td><strong>Status</strong></td><td><span t-field="o.state"/></td>
+                            </tr>
+                        </table>
+                        <br/>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Salesperson</th>
+                                    <th>Route</th>
+                                    <th>Route Plan</th>
+                                    <th class="text-end">Clients</th>
+                                    <th class="text-end">Target Calls</th>
+                                    <th class="text-end">Amount</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.line_ids" t-as="line">
+                                    <td><span t-field="line.user_id"/></td>
+                                    <td><span t-field="line.route_id"/></td>
+                                    <td><span t-field="line.plan_id"/></td>
+                                    <td class="text-end"><span t-field="line.planned_clients"/></td>
+                                    <td class="text-end"><span t-field="line.planned_productive_calls"/></td>
+                                    <td class="text-end"><span t-field="line.facilitation_amount"/></td>
+                                    <td><span t-field="line.note"/></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3"><strong>Totals</strong></td>
+                                    <td class="text-end"><strong><span t-field="o.total_clients"/></strong></td>
+                                    <td/>
+                                    <td class="text-end"><strong><span t-field="o.total_facilitation_amount"/></strong></td>
+                                    <td/>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div class="row mt32">
+                            <div class="col-6">Prepared by: ________________________</div>
+                            <div class="col-6">Approved by: ________________________</div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

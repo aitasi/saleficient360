@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="field_sales_route_plan.ManagerPanel" owl="1">
+        <div class="fsrp-manager-panel">
+            <div class="fsrp-manager-header">
+                <div><h1><t t-esc="state.data.panel_title || 'Manager Control Panel'"/></h1><p>Live field sales execution. Default period is today.</p></div>
+                <div class="fsrp-manager-actions"><button class="btn btn-secondary" t-on-click="load">Refresh</button><button class="btn btn-success" t-on-click="openSalesPersonProfiles">Sales Person Profiles</button><button class="btn btn-primary" t-on-click="startTour">🎓 Tour Guide</button><button class="btn btn-primary" t-on-click="openMap">Open Map</button><button class="btn btn-info" t-on-click="openLiveTeamMap">Live Team Map</button><button class="btn btn-secondary" t-on-click="openVisits">Route Visits</button><button class="btn btn-outline-primary" t-on-click="openRouteClients">Route Client Intelligence</button><button class="btn btn-warning" t-on-click="openMarketingHistory">Client Communication History</button></div>
+            </div>
+            <div class="fsrp-date-filter-bar fsrp-manager-date-filter">
+                <label>From <input type="date" t-att-value="state.date_from" t-on-change="setDateFrom"/></label>
+                <label>To <input type="date" t-att-value="state.date_to" t-on-change="setDateTo"/></label>
+                <button class="btn btn-primary" t-on-click="applyDateFilter">Apply</button>
+                <button class="btn btn-light" t-on-click="resetDateFilter">Today</button>
+                <button class="btn btn-light" t-on-click="() => this.applyMarketingPeriod('current')">Current Period</button>
+                <button class="btn btn-light" t-on-click="() => this.applyMarketingPeriod('jan_apr')">Jan-Apr</button>
+                <button class="btn btn-light" t-on-click="() => this.applyMarketingPeriod('may_aug')">May-Aug</button>
+                <button class="btn btn-light" t-on-click="() => this.applyMarketingPeriod('sep_dec')">Sep-Dec</button>
+                <span>Selected: <strong><t t-esc="state.data.selected_label || state.date_from"/></strong></span>
+            </div>
+            <t t-if="state.loading"><div class="fsrp-simple-card">Loading manager data...</div></t>
+            <t t-else="">
+                <div t-attf-class="fsrp-license-timer fsrp-license-#{(state.data.license || {}).state || 'active'}">
+                    <div class="fsrp-license-icon">⏳</div>
+                    <div>
+                        <span>License Timer</span>
+                        <strong><t t-esc="(state.data.license || {}).days_remaining || 0"/> day(s) remaining</strong>
+                        <small>Expires: <t t-esc="(state.data.license || {}).expiry_label || (state.data.license || {}).expiry_date || ''"/></small>
+                    </div>
+                    <t t-if="(state.data.license || {}).can_activate">
+                        <button class="btn btn-sm btn-primary" t-on-click="openLicense">Activate / Renew</button>
+                    </t>
+                </div>
+                <div class="fsrp-accordion-section fsrp-manager-performance-section fsrp-manager-modern-sections">
+                    <button class="fsrp-section-toggle fsrp-section-main-toggle" t-on-click="() => this.toggleSection('performance')">
+                        <span>📊 Manager Performance Dashboard</span>
+                        <small>Lightweight sections for selected period, today, MTD and YTD</small>
+                        <b><t t-esc="state.sections.performance ? '−' : '+'"/></b>
+                    </button>
+                    <div t-if="state.sections.performance" class="fsrp-section-body">
+                        <div class="fsrp-selected-period-title">Selected Period: <strong><t t-esc="(state.data.period_kpis || {}).selected_label || state.date_from"/></strong></div>
+                        <div class="fsrp-kpi-subsection fsrp-modern-subsection fsrp-section-period">
+                            <button class="fsrp-subsection-toggle" t-on-click="() => this.toggleSection('period')"><span>🗓️ Section A: Period Summary</span><b><t t-esc="state.sections.period ? '−' : '+'"/></b></button>
+                            <div t-if="state.sections.period" class="fsrp-exec-kpi-row fsrp-selected-kpis">
+                                <div class="fsrp-exec-kpi blue"><div class="fsrp-kpi-icon">👥</div><div><span>Period Visits</span><strong><t t-esc="(state.data.period_kpis || {}).selected_visits || 0"/></strong></div></div>
+                                <div class="fsrp-exec-kpi orange"><div class="fsrp-kpi-icon">🛒</div><div><span>Period Orders</span><strong><t t-esc="(state.data.period_kpis || {}).selected_orders || 0"/></strong></div></div>
+                                <div class="fsrp-exec-kpi purple"><div class="fsrp-kpi-icon">💰</div><div><span>Period Sales</span><strong><t t-esc="(state.data.period_kpis || {}).selected_sales_fmt || '0.00'"/></strong><small>Sales Order Value</small></div></div>
+                                <div class="fsrp-exec-kpi blue"><div class="fsrp-kpi-icon">🧾</div><div><span>Period POS Order</span><strong><t t-esc="(state.data.period_kpis || {}).selected_pos_order_total_fmt || '0.00'"/></strong><small>POS Order Total</small></div></div>
+                                <div class="fsrp-exec-kpi green"><div class="fsrp-kpi-icon">💳</div><div><span>Period Payments</span><strong><t t-esc="(state.data.period_kpis || {}).selected_pos_payments_fmt || '0.00'"/></strong><small>POS Paid Amount</small></div></div>
+                                <div class="fsrp-exec-kpi orange"><div class="fsrp-kpi-icon">⚠️</div><div><span>Period POS Amount Due</span><strong><t t-esc="(state.data.period_kpis || {}).selected_amount_due_fmt || '0.00'"/></strong><small>POS Balance</small></div></div>
+                            </div>
+                        </div>
+                        <div class="fsrp-kpi-subsection fsrp-modern-subsection fsrp-section-today">
+                            <button class="fsrp-subsection-toggle" t-on-click="() => this.toggleSection('today')"><span>🌤️ Section B: Today</span><b><t t-esc="state.sections.today ? '−' : '+'"/></b></button>
+                            <div t-if="state.sections.today" class="fsrp-exec-kpi-row">
+                                <div class="fsrp-exec-kpi teal"><div class="fsrp-kpi-icon">👥</div><div><span>Today Visits</span><strong><t t-esc="(state.data.period_kpis || {}).today_visits || 0"/></strong></div></div>
+                                <div class="fsrp-exec-kpi blue"><div class="fsrp-kpi-icon">🛒</div><div><span>Today Orders</span><strong><t t-esc="(state.data.period_kpis || {}).today_orders || 0"/></strong></div></div>
+                                <div class="fsrp-exec-kpi green"><div class="fsrp-kpi-icon">💰</div><div><span>Today Sales</span><strong><t t-esc="(state.data.period_kpis || {}).today_sales_fmt || '0.00'"/></strong><small>Sales Order Value</small></div></div>
+                                <div class="fsrp-exec-kpi blue"><div class="fsrp-kpi-icon">🧾</div><div><span>Today POS Order</span><strong><t t-esc="(state.data.period_kpis || {}).today_pos_order_total_fmt || '0.00'"/></strong><small>POS Order Total</small></div></div>
+                                <div class="fsrp-exec-kpi purple"><div class="fsrp-kpi-icon">💳</div><div><span>Today POS Payments</span><strong><t t-esc="(state.data.period_kpis || {}).today_pos_payments_fmt || '0.00'"/></strong><small>Paid Amount Only</small></div></div>
+                                <div class="fsrp-exec-kpi orange"><div class="fsrp-kpi-icon">⚠️</div><div><span>Today Amount Due</span><strong><t t-esc="(state.data.period_kpis || {}).today_amount_due_fmt || '0.00'"/></strong><small>POS Balance</small></div></div>
+                            </div>
+                        </div>
+                        <div class="fsrp-kpi-subsection fsrp-modern-subsection fsrp-section-mtd">
+                            <button class="fsrp-subsection-toggle" t-on-click="() => this.toggleSection('mtd')"><span>📆 Section C: MTD</span><b><t t-esc="state.sections.mtd ? '−' : '+'"/></b></button>
+                            <div t-if="state.sections.mtd" class="fsrp-exec-kpi-row">
+                                <div class="fsrp-exec-kpi blue"><div class="fsrp-kpi-icon">👥</div><div><span>MTD Visits</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_visits || 0"/></strong></div></div>
+                                <div class="fsrp-exec-kpi orange"><div class="fsrp-kpi-icon">🛒</div><div><span>MTD Orders</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_orders || 0"/></strong></div></div>
+                                <div class="fsrp-exec-kpi purple"><div class="fsrp-kpi-icon">💰</div><div><span>MTD Sales</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_sales_fmt || '0.00'"/></strong><small>Sales Order Value</small></div></div>
+                                <div class="fsrp-exec-kpi blue"><div class="fsrp-kpi-icon">🧾</div><div><span>MTD POS Order</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_pos_order_total_fmt || '0.00'"/></strong><small>POS Order Total</small></div></div>
+                                <div class="fsrp-exec-kpi green"><div class="fsrp-kpi-icon">💳</div><div><span>MTD POS Payments</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_pos_payments_fmt || '0.00'"/></strong><small>Paid Amount Only</small></div></div>
+                                <div class="fsrp-exec-kpi orange"><div class="fsrp-kpi-icon">⚠️</div><div><span>MTD Amount Due</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_amount_due_fmt || '0.00'"/></strong><small>POS Balance</small></div></div>
+                            </div>
+                        </div>
+                        <div class="fsrp-kpi-subsection fsrp-modern-subsection fsrp-section-ytd">
+                            <button class="fsrp-subsection-toggle" t-on-click="() => this.toggleSection('ytd')"><span>📈 Section D: YTD</span><b><t t-esc="state.sections.ytd ? '−' : '+'"/></b></button>
+                            <div t-if="state.sections.ytd" class="fsrp-exec-kpi-row">
+                                <div class="fsrp-exec-kpi purple"><div class="fsrp-kpi-icon">👥</div><div><span>YTD Visits</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_visits || 0"/></strong></div></div>
+                                <div class="fsrp-exec-kpi blue"><div class="fsrp-kpi-icon">🛒</div><div><span>YTD Orders</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_orders || 0"/></strong></div></div>
+                                <div class="fsrp-exec-kpi green"><div class="fsrp-kpi-icon">💰</div><div><span>YTD Sales</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_sales_fmt || '0.00'"/></strong><small>Sales Order Value</small></div></div>
+                                <div class="fsrp-exec-kpi blue"><div class="fsrp-kpi-icon">🧾</div><div><span>YTD POS Order</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_pos_order_total_fmt || '0.00'"/></strong><small>POS Order Total</small></div></div>
+                                <div class="fsrp-exec-kpi purple"><div class="fsrp-kpi-icon">💳</div><div><span>YTD POS Payments</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_pos_payments_fmt || '0.00'"/></strong><small>Paid Amount Only</small></div></div>
+                                <div class="fsrp-exec-kpi orange"><div class="fsrp-kpi-icon">⚠️</div><div><span>YTD Amount Due</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_amount_due_fmt || '0.00'"/></strong><small>POS Balance</small></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fsrp-manager-box fsrp-route-client-intelligence-box">
+                    <div class="fsrp-box-title-row"><div><h3>Route Client Intelligence</h3><p class="fsrp-empty-line">Open all clients assigned to market routes. Use the client form chatter, activities, route visit history and ageing fields to review follow-ups, communication and client nature.</p></div><button class="btn btn-outline-primary" t-on-click="openRouteClients">Open Route Clients</button></div>
+                </div>
+
+                <div class="fsrp-manager-kpis fsrp-secondary-kpis">
+                    <div class="fsrp-manager-kpi"><span>Planned Today</span><strong><t t-esc="state.data.planned || 0"/></strong></div>
+                    <div class="fsrp-manager-kpi green"><span>Visited Today</span><strong><t t-esc="state.data.visited || 0"/></strong></div>
+                    <div class="fsrp-manager-kpi orange"><span>Productive Today</span><strong><t t-esc="state.data.productive || 0"/></strong></div>
+                    <div class="fsrp-manager-kpi purple"><span>Active Now</span><strong><t t-esc="state.data.active_count || 0"/></strong></div>
+                </div>
+
+                <div class="fsrp-manager-box fsrp-sku-target-box">
+                    <h3>SKU Target Tracking</h3>
+                    <p class="fsrp-empty-line">Cached snapshots are used for speed. Default load is Today; selecting MTD/YTD/custom periods refreshes only active targets in that period.</p>
+                    <div class="fsrp-exec-kpi-row">
+                        <div class="fsrp-exec-kpi purple"><div class="fsrp-kpi-icon">🎯</div><div><span>Target Qty</span><strong><t t-esc="(state.data.sku_target_summary || {}).target_qty || 0"/></strong></div></div>
+                        <div class="fsrp-exec-kpi green"><div class="fsrp-kpi-icon">✅</div><div><span>Sold Qty</span><strong><t t-esc="(state.data.sku_target_summary || {}).sold_qty || 0"/></strong></div></div>
+                        <div class="fsrp-exec-kpi orange"><div class="fsrp-kpi-icon">📊</div><div><span>Qty Achievement</span><strong><t t-esc="(state.data.sku_target_summary || {}).qty_progress || 0"/>%</strong></div></div>
+                        <div class="fsrp-exec-kpi blue"><div class="fsrp-kpi-icon">💰</div><div><span>Amount Achievement</span><strong><t t-esc="(state.data.sku_target_summary || {}).amount_progress || 0"/>%</strong></div></div>
+                    </div>
+                    <t t-if="((state.data.sku_target_summary || {}).worst_skus || []).length">
+                        <table><thead><tr><th>SKU / Category</th><th>Salesperson</th><th>Route</th><th>Sold / Target</th><th>Gap</th><th>Achievement</th><th>Status</th></tr></thead><tbody>
+                            <t t-foreach="(state.data.sku_target_summary || {}).worst_skus || []" t-as="sku" t-key="'sku-gap-' + sku.id">
+                                <tr><td><t t-esc="sku.sku"/></td><td><t t-esc="sku.salesperson"/></td><td><t t-esc="sku.route"/></td><td><t t-esc="sku.sold_qty"/> / <t t-esc="sku.target_qty"/></td><td><t t-esc="sku.gap_qty"/></td><td><t t-esc="sku.progress"/>%</td><td><t t-esc="sku.state"/></td></tr>
+                            </t>
+                        </tbody></table>
+                    </t>
+                    <t t-else=""><div class="fsrp-empty-line">No SKU target gaps found for the selected period.</div></t>
+                </div>
+
+                <div class="fsrp-manager-columns">
+                    <t t-if="(state.data.manager_performance || []).length">
+                        <div class="fsrp-manager-box"><h3>Sales Manager Performance</h3><table><thead><tr><th>Manager</th><th>Today Sales</th><th>Today POS Order</th><th>Today POS Payments</th><th>Today Amount Due</th><th>MTD Sales</th><th>YTD Sales</th><th>Today Orders</th><th>MTD Orders</th><th>YTD Orders</th></tr></thead><tbody><t t-foreach="state.data.manager_performance || []" t-as="row" t-key="'mgr-' + row.name"><tr><td><t t-esc="row.name"/></td><td><t t-esc="row.today_sales_fmt"/></td><td><t t-esc="row.today_pos_order_total_fmt"/></td><td><t t-esc="row.today_pos_payments_fmt"/></td><td><t t-esc="row.today_amount_due_fmt"/></td><td><t t-esc="row.mtd_sales_fmt"/></td><td><t t-esc="row.ytd_sales_fmt"/></td><td><t t-esc="row.today_orders"/></td><td><t t-esc="row.mtd_orders"/></td><td><t t-esc="row.ytd_orders"/></td></tr></t></tbody></table></div>
+                    </t>
+                    <t t-if="(state.data.supervisor_performance || []).length">
+                        <div class="fsrp-manager-box"><h3>Supervisor Performance</h3><table><thead><tr><th>Supervisor</th><th>Routes</th><th>Team Users</th><th>Visited</th><th>Productive</th><th>Today Sales</th><th>Today POS Order</th><th>Today POS Payments</th><th>Today Amount Due</th><th>MTD Sales</th><th>YTD Sales</th></tr></thead><tbody><t t-foreach="state.data.supervisor_performance || []" t-as="row" t-key="'sup-' + row.name"><tr><td><t t-esc="row.name"/></td><td><t t-esc="row.routes"/></td><td><t t-esc="row.users"/></td><td><t t-esc="row.visited"/> / <t t-esc="row.planned"/></td><td><t t-esc="row.productive"/></td><td><t t-esc="row.today_sales_fmt"/></td><td><t t-esc="row.today_pos_order_total_fmt"/></td><td><t t-esc="row.today_pos_payments_fmt"/></td><td><t t-esc="row.today_amount_due_fmt"/></td><td><t t-esc="row.mtd_sales_fmt"/></td><td><t t-esc="row.ytd_sales_fmt"/></td></tr></t></tbody></table></div>
+                    </t>
+                </div>
+                <div class="fsrp-manager-columns">
+                    <t t-if="(state.data.salesperson_performance || []).length">
+                        <div class="fsrp-manager-box"><h3>Sales Persons Performance</h3><table><thead><tr><th>Sales Person</th><th>Routes</th><th>Visited</th><th>Productive</th><th>Today Sales</th><th>Today POS Order</th><th>Today POS Payments</th><th>Today Amount Due</th><th>MTD Sales</th><th>YTD Sales</th></tr></thead><tbody><t t-foreach="state.data.salesperson_performance || []" t-as="row" t-key="'sp-' + row.name"><tr><td><t t-esc="row.name"/></td><td><t t-esc="row.routes"/></td><td><t t-esc="row.visited"/> / <t t-esc="row.planned"/></td><td><t t-esc="row.productive"/></td><td><t t-esc="row.today_sales_fmt"/></td><td><t t-esc="row.today_pos_order_total_fmt"/></td><td><t t-esc="row.today_pos_payments_fmt"/></td><td><t t-esc="row.today_amount_due_fmt"/></td><td><t t-esc="row.mtd_sales_fmt"/></td><td><t t-esc="row.ytd_sales_fmt"/></td></tr></t></tbody></table></div>
+                    </t>
+                    <t t-if="(state.data.assigned_routes || []).length">
+                        <div class="fsrp-manager-box"><h3>Routes Managed By Supervisor</h3><table><thead><tr><th>Route</th><th>Code</th><th>Sales Persons</th></tr></thead><tbody><t t-foreach="state.data.assigned_routes || []" t-as="route" t-key="'route-' + route.id"><tr><td><t t-esc="route.name"/></td><td><t t-esc="route.code"/></td><td><t t-esc="route.salespersons"/></td></tr></t></tbody></table></div>
+                    </t>
+                </div>
+
+                <div class="fsrp-manager-box fsrp-route-usage-box">
+                    <h3>Route Usage by Productive Client Coverage</h3>
+                    <p class="fsrp-empty-line">Selected period counts each client once only after the first successful productive call. Repeat productive calls remain under Attempts.</p>
+                    <t t-if="!(state.data.route_productive_usage || []).length">
+                        <div class="fsrp-empty-line">No route productive usage found for the selected period.</div>
+                    </t>
+                    <t t-else="">
+                        <table>
+                            <thead><tr><th>Route</th><th>Salesperson</th><th>Period</th><th>Productive Clients / Route Clients</th><th>Achievement</th><th>Productive Attempts</th></tr></thead>
+                            <tbody>
+                                <t t-foreach="state.data.route_productive_usage || []" t-as="row" t-key="'route-use-' + row.route + '-' + row.salesperson">
+                                    <tr>
+                                        <td><t t-esc="row.route"/></td>
+                                        <td><t t-esc="row.salesperson"/></td>
+                                        <td><t t-esc="row.period"/></td>
+                                        <td><strong><t t-esc="row.performance"/></strong></td>
+                                        <td><t t-esc="row.achievement"/>%</td>
+                                        <td><t t-esc="row.productive_attempts"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+                </div>
+
+                <div class="fsrp-manager-box fsrp-device-alerts-box">
+                    <h3>Smart Device Alerts</h3>
+                    <t t-if="!(state.data.device_alerts || []).length">
+                        <div class="fsrp-empty-line">No active device alerts.</div>
+                    </t>
+                    <t t-else="">
+                        <table>
+                            <thead><tr><th>Salesperson</th><th>Route</th><th>Alert</th><th>Battery</th><th>Network</th><th>Last Seen</th></tr></thead>
+                            <tbody>
+                                <t t-foreach="state.data.device_alerts || []" t-as="a" t-key="a.user + a.last_seen">
+                                    <tr t-attf-class="fsrp-device-alert-row #{a.level == '2_critical' ? 'critical' : 'warning'}">
+                                        <td><t t-esc="a.user"/></td>
+                                        <td><t t-esc="a.route"/></td>
+                                        <td><t t-esc="a.message"/> <t t-if="a.ack">(acknowledged)</t></td>
+                                        <td><t t-esc="a.battery"/>%</td>
+                                        <td><t t-esc="a.network"/></td>
+                                        <td><t t-esc="a.last_seen"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+                </div>
+
+                <div class="fsrp-target-section fsrp-manager-targets">
+                    <div class="fsrp-section-title">
+                        <h3>All Routes / Group Targets</h3>
+                        <span>Company and route targets for the current period</span>
+                    </div>
+                    <div class="fsrp-target-grid">
+                        <t t-if="!(state.data.group_targets || []).length">
+                            <div class="fsrp-target-card fsrp-target-empty">No active group or route target.</div>
+                        </t>
+                        <t t-foreach="state.data.group_targets || []" t-as="target" t-key="'mgr-g-' + target.id">
+                            <div t-attf-class="fsrp-target-card fsrp-target-#{target.state}">
+                                <div class="fsrp-target-top"><strong><t t-esc="target.name"/></strong><span><t t-esc="target.progress"/>%</span></div>
+                                <div class="fsrp-target-meta"><t t-esc="target.route || target.scope"/> <t t-if="target.salesperson">• <t t-esc="target.salesperson"/></t></div>
+                                <div class="fsrp-progress"><div t-att-style="'width:' + target.progress + '%'"/></div>
+                                <div class="fsrp-target-numbers">
+                                    <span>Amount: <b><t t-esc="target.amount_done"/></b> / <t t-esc="target.amount_target"/></span>
+                                    <span>Orders: <b><t t-esc="target.count_done"/></b> / <t t-esc="target.count_target"/></span>
+                                </div>
+                                <small><t t-esc="target.period"/></small>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+                <div class="fsrp-manager-columns">
+                    <div class="fsrp-manager-box"><h3>Salespeople Today</h3><table><thead><tr><th>Salesperson</th><th>Route</th><th>Visited</th><th>Productive</th><th>Sales Order Value</th><th>POS Order Total</th><th>POS Paid</th><th>POS Due</th></tr></thead><tbody><t t-foreach="state.data.reps || []" t-as="rep" t-key="rep.user"><tr><td><t t-esc="rep.user"/></td><td><t t-esc="rep.route"/></td><td><t t-esc="rep.visited"/> / <t t-esc="rep.planned"/></td><td><t t-esc="rep.productive"/></td><td><t t-esc="rep.sales_fmt || rep.sales"/></td><td><t t-esc="rep.pos_order_total_fmt || '0.00'"/></td><td><t t-esc="rep.pos_paid_fmt || '0.00'"/></td><td><t t-esc="rep.pos_due_fmt || '0.00'"/></td></tr></t></tbody></table></div>
+                    <div class="fsrp-manager-box"><h3>Checked In Now / Live Team</h3><table><thead><tr><th>Client</th><th>Salesperson</th><th>Route</th><th>Check In</th></tr></thead><tbody><t t-foreach="state.data.active_visits || []" t-as="v" t-key="v.client + v.check_in"><tr><td><t t-esc="v.client"/></td><td><t t-esc="v.salesperson"/></td><td><t t-esc="v.route"/></td><td><t t-esc="v.check_in"/></td></tr></t></tbody></table></div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

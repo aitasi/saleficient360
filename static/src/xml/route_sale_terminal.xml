@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="field_sales_route_plan.RouteSaleTerminal" owl="1">
+        <div class="o_route_sale_terminal h-100 d-flex flex-column">
+            <div class="o_route_terminal_header d-flex align-items-center justify-content-between p-3 border-bottom bg-white">
+                <div>
+                    <h3 class="m-0"><t t-esc="state.quickMode ? 'Quick Sales Order Terminal' : 'POS Route Sales Terminal'"/></h3>
+                    <div class="text-muted">
+                        <t t-if="state.quickMode">
+                            <span t-esc="state.selectedPartnerName || 'Select any client'"/>
+                            <t t-if="state.selectedRouteName"> · <span t-esc="state.selectedRouteName"/></t>
+                        </t>
+                        <t t-else="">
+                            <span t-esc="state.data.partner_name"/> · <span t-esc="state.data.route_name"/>
+                        </t>
+                        <t t-if="state.data.sale_order_name"> · Order: <strong t-esc="state.data.sale_order_name"/></t>
+                    </div>
+                </div>
+                <div class="d-flex gap-2 align-items-center o_route_terminal_header_actions">
+                    <button class="btn btn-outline-secondary" t-on-click="backToVisit"><t t-esc="state.quickMode ? 'Back to My Field Work' : 'Back to Visit'"/></button>
+                    <button t-if="!state.quickMode" class="btn btn-secondary" t-on-click="backToPlan">Back to Route Plan</button>
+                    <button class="btn btn-outline-primary" t-on-click="toggleRecreatePanel">Re-create Order</button>
+                    <button class="btn btn-primary" t-on-click="confirmOrder">Create / Update Sales Order</button>
+                </div>
+            </div>
+
+            <t t-if="state.showRecreatePanel">
+                <div class="alert alert-light border m-3 shadow-sm" role="alert">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <strong>Re-create Previous Sales Order</strong>
+                            <div class="small text-muted">Load a previous order, modify quantities or add products, then resubmit without changing its order number.</div>
+                        </div>
+                        <button class="btn btn-sm btn-outline-secondary" t-on-click="toggleRecreatePanel">Close</button>
+                    </div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">SO #</span>
+                        <input class="form-control" placeholder="Type sales order number, e.g. S00045" t-model="state.orderSearch" t-on-keyup="searchPreviousOrders"/>
+                        <button class="btn btn-outline-primary" type="button" t-on-click="searchPreviousOrders">Search</button>
+                    </div>
+                    <t t-if="state.orderSearchLoading">
+                        <div class="text-muted mb-2">Searching sales orders...</div>
+                    </t>
+                    <t t-if="!filteredPreviousOrders.length and !state.orderSearchLoading">
+                        <div class="text-muted">No matching previous sales orders found for this customer.</div>
+                    </t>
+                    <div class="list-group" t-if="filteredPreviousOrders.length">
+                        <t t-foreach="filteredPreviousOrders" t-as="order" t-key="order.id">
+                            <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" t-on-click="() => this.recreateOrder(order.id)">
+                                <span><strong t-esc="order.name"/> <span class="text-muted" t-esc="order.date_order"/></span>
+                                <span><span class="badge bg-secondary me-2" t-esc="order.state"/><strong t-esc="order.amount_display"/></span>
+                            </button>
+                        </t>
+                    </div>
+                </div>
+            </t>
+
+            <t t-if="state.editingOrderName">
+                <div class="alert alert-info m-3" role="alert">
+                    Editing previous Sales Order <strong t-esc="state.editingOrderName"/>. Resubmitting will keep the same order number.
+                </div>
+            </t>
+
+            <t t-if="state.successMessage">
+                <div class="alert alert-success m-3 d-flex align-items-center justify-content-between" role="alert">
+                    <div>
+                        <strong>Success:</strong>
+                        <span t-esc="state.successMessage"/>
+                        <div class="small">This message will remain visible for about 1 minute.</div>
+                    </div>
+                    <div class="d-flex gap-2"><button class="btn btn-sm btn-success" t-if="state.lastOrderId" t-on-click="printReceipt">Print 80mm Receipt</button><button class="btn btn-sm btn-outline-success" t-on-click="() => { this.state.successMessage = '' }">Dismiss</button></div>
+                </div>
+            </t>
+
+            <t t-if="state.loading">
+                <div class="p-5 text-center text-muted">Loading terminal...</div>
+            </t>
+            <t t-else="">
+                <t t-if="state.quickMode">
+                    <div class="m-3 p-3 bg-white border rounded shadow-sm">
+                        <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">
+                            <div>
+                                <strong>Quick Sales Order</strong>
+                                <div class="small text-muted">Authorized users can sell to any client on any route without requiring today's route plan.</div>
+                            </div>
+                            <div t-if="state.selectedPartnerName" class="badge bg-success fs-6">Selected: <t t-esc="state.selectedPartnerName"/></div>
+                        </div>
+                        <div class="row g-3 mt-1">
+                            <div class="col-lg-7">
+                                <div class="input-group">
+                                    <span class="input-group-text">Client</span>
+                                    <input class="form-control" placeholder="Search any customer by name, phone, or mobile" t-model="state.customerSearch" t-on-keyup="searchCustomers"/>
+                                    <button class="btn btn-outline-primary" type="button" t-on-click="searchCustomers">Search</button>
+                                    <button class="btn btn-outline-success" type="button" t-on-click="toggleNewCustomerPanel">Create New Client</button>
+                                </div>
+                                <t t-if="state.customerSearchLoading"><div class="small text-muted mt-2">Searching customers...</div></t>
+                                <div class="list-group mt-2" t-if="state.customerResults.length">
+                                    <t t-foreach="state.customerResults" t-as="customer" t-key="customer.id">
+                                        <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" t-on-click="() => this.selectCustomer(customer)">
+                                            <span><strong t-esc="customer.name"/><br/><small class="text-muted" t-esc="customer.phone || ''"/></span>
+                                            <span class="badge bg-light text-dark" t-esc="customer.route_name || 'No route'"/>
+                                        </button>
+                                    </t>
+                                </div>
+                                <div t-if="state.showNewCustomerPanel" class="border rounded p-3 mt-2 bg-light">
+                                    <strong>Create New Client</strong>
+                                    <div class="row g-2 mt-1">
+                                        <div class="col-md-7"><input class="form-control" placeholder="Client name" t-model="state.newCustomerName"/></div>
+                                        <div class="col-md-5"><input class="form-control" placeholder="Phone / mobile" t-model="state.newCustomerPhone"/></div>
+                                    </div>
+                                    <div class="d-flex gap-2 mt-2">
+                                        <button class="btn btn-sm btn-success" t-on-click="createNewCustomer">Create and Select</button>
+                                        <button class="btn btn-sm btn-outline-secondary" t-on-click="toggleNewCustomerPanel">Cancel</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="input-group">
+                                    <span class="input-group-text">Salesperson</span>
+                                    <input class="form-control" placeholder="Assign salesperson" t-model="state.salespersonSearch" t-on-keyup="searchSalespersons"/>
+                                    <button class="btn btn-outline-primary" type="button" t-on-click="searchSalespersons">Search</button>
+                                </div>
+                                <div class="small text-muted mt-1">Order salesperson: <strong t-esc="state.selectedSalesUserName || 'Current user'"/></div>
+                                <t t-if="state.salespersonSearchLoading"><div class="small text-muted mt-2">Searching salespersons...</div></t>
+                                <div class="list-group mt-2" t-if="state.salespersonResults.length">
+                                    <t t-foreach="state.salespersonResults" t-as="person" t-key="person.id">
+                                        <button type="button" class="list-group-item list-group-item-action" t-on-click="() => this.selectSalesperson(person)">
+                                            <strong t-esc="person.name"/> <small class="text-muted" t-esc="person.login || ''"/>
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                <div class="o_route_mobile_switcher bg-white border-bottom p-2">
+                    <div class="btn-group w-100" role="group">
+                        <button t-att-class="'btn ' + (state.mobilePanel === 'products' ? 'btn-primary' : 'btn-outline-primary')" t-on-click="showProducts">Products</button>
+                        <button t-att-class="'btn ' + (state.mobilePanel === 'cart' ? 'btn-primary' : 'btn-outline-primary')" t-on-click="showCart">Cart (<t t-esc="cartLines.length"/>)</button>
+                    </div>
+                </div>
+                <div t-att-class="'o_route_terminal_body d-flex flex-grow-1 overflow-hidden o_route_mobile_panel_' + state.mobilePanel">
+                    <div class="o_route_product_side flex-grow-1 d-flex flex-column p-3 overflow-hidden">
+                        <div class="d-flex gap-2 mb-3">
+                            <select class="form-select o_route_category_select" t-model="state.selectedCategoryId">
+                                <option value="0">All Product Categories</option>
+                                <t t-foreach="state.categories" t-as="category" t-key="category.id">
+                                    <option t-att-value="category.id" t-esc="category.name"/>
+                                </t>
+                            </select>
+                            <input class="form-control" placeholder="Search products by name or code" t-model="state.search"/>
+                        </div>
+                        <div class="o_route_product_grid overflow-auto">
+                            <t t-foreach="filteredProducts" t-as="product" t-key="product.id">
+                                <button type="button" class="o_route_product_tile text-start" t-on-click="() => this.addProduct(product)">
+                                    <div class="o_route_product_image">
+                                        <img t-att-src="product.image_url" t-att-alt="product.name"/>
+                                    </div>
+                                    <div class="o_route_product_name" t-esc="product.name"/>
+                                    <div class="o_route_product_meta">
+                                        <span t-if="product.default_code" t-esc="product.default_code"/>
+                                        <span class="float-end" t-esc="product.price_display"/>
+                                    </div>
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <div class="o_route_cart_side bg-white border-start d-flex flex-column">
+                        <div class="p-3 border-bottom">
+                            <h4 class="m-0">Cart</h4>
+                            <div t-if="state.editingOrderName" class="badge bg-info text-dark mt-2">Editing <t t-esc="state.editingOrderName"/></div>
+                            <div class="text-muted"><span t-esc="cartLines.length"/> product(s)</div>
+                        </div>
+                        <div class="o_route_cart_lines flex-grow-1 overflow-auto p-3">
+                            <t t-if="!cartLines.length">
+                                <div class="text-center text-muted p-4">Tap products to add them to this order.</div>
+                            </t>
+                            <t t-foreach="cartLines" t-as="line" t-key="line.product_id">
+                                <div class="o_route_cart_line border-bottom py-2">
+                                    <div class="fw-bold" t-esc="line.name"/>
+                                    <div class="d-flex align-items-center justify-content-between mt-2">
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-outline-secondary" t-on-click="() => this.decrease(line.product_id)">-</button>
+                                            <input class="form-control form-control-sm o_route_qty_input" type="number" min="0" step="1" t-att-value="line.qty" t-on-change="(ev) => this.changeQty(line.product_id, ev.target.value)"/>
+                                            <button class="btn btn-sm btn-outline-secondary" t-on-click="() => this.increase(line.product_id)">+</button>
+                                        </div>
+                                        <div class="text-end">
+                                            <div t-esc="state.data.currency_symbol + ' ' + (line.qty * line.price_unit).toFixed(2)"/>
+                                            <small class="text-muted" t-esc="state.data.currency_symbol + ' ' + line.price_unit.toFixed(2) + ' each'"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="p-3 border-top">
+                            <div class="d-flex justify-content-between fs-4 mb-3">
+                                <strong>Total</strong>
+                                <strong t-esc="state.data.currency_symbol + ' ' + cartTotal.toFixed(2)"/>
+                            </div>
+                            <button class="btn btn-outline-primary w-100 mb-2" t-on-click="toggleRecreatePanel">Re-create Order</button>
+                            <button class="btn btn-primary w-100 mb-2" t-on-click="confirmOrder">Create / Update Sales Order</button>
+                            <button class="btn btn-success w-100 mb-2" t-if="state.lastOrderId || state.data.sale_order_id" t-on-click="printReceipt">Print 80mm / POS Receipt</button>
+                            <button class="btn btn-outline-secondary w-100 mb-2 o_route_mobile_only" t-on-click="showProducts">Back to Products</button>
+                            <button class="btn btn-outline-secondary w-100 mb-2" t-on-click="backToVisit">Back to Visit</button>
+                            <button class="btn btn-outline-danger w-100" t-on-click="clearCart">Clear Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

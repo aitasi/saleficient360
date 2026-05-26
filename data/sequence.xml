@@ -1,0 +1,26 @@
+<odoo>
+    <record id="seq_sales_route_plan" model="ir.sequence">
+        <field name="name">Daily Route Plan</field>
+        <field name="code">sales.route.plan</field>
+        <field name="prefix">RP/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_sales_route_facilitation_form" model="ir.sequence">
+        <field name="name">Route Facilitation Form</field>
+        <field name="code">sales.route.facilitation.form</field>
+        <field name="prefix">FAC/%(y)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <record id="seq_field_sales_commercial_request" model="ir.sequence">
+        <field name="name">Commercial Request</field>
+        <field name="code">field.sales.commercial.request</field>
+        <field name="prefix">CR/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+
+</odoo>

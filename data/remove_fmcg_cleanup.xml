@@ -1,0 +1,5 @@
+<odoo>
+    <data noupdate="1">
+        <function model="sales.route.cleanup" name="cleanup_fmcg_artifacts"/>
+    </data>
+</odoo>

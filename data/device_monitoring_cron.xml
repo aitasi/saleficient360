@@ -1,0 +1,12 @@
+<odoo>
+    <record id="ir_cron_refresh_device_smart_alerts" model="ir.cron">
+        <field name="name">Field Sales: Refresh Device Smart Alerts</field>
+        <field name="model_id" ref="model_sales_route_device_status"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_refresh_device_alerts()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

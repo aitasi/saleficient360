@@ -1,0 +1,8 @@
+<odoo noupdate="1">
+    <record id="reason_closed" model="sales.route.call.reason"><field name="name">Closed shop</field><field name="category">closed</field><field name="sequence">10</field></record>
+    <record id="reason_no_money" model="sales.route.call.reason"><field name="name">No money / no cash</field><field name="category">no_cash</field><field name="sequence">20</field></record>
+    <record id="reason_still_stocked" model="sales.route.call.reason"><field name="name">Client still has stock</field><field name="category">stock</field><field name="sequence">30</field></record>
+    <record id="reason_owner_absent" model="sales.route.call.reason"><field name="name">Owner / buyer absent</field><field name="category">owner_absent</field><field name="sequence">40</field></record>
+    <record id="reason_competitor" model="sales.route.call.reason"><field name="name">Competitor supplied</field><field name="category">competitor</field><field name="sequence">50</field></record>
+    <record id="reason_bad_debt" model="sales.route.call.reason"><field name="name">Bad debt / blocked customer</field><field name="category">bad_debt</field><field name="sequence">60</field></record>
+</odoo>

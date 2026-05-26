@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_field_sales_pos_80mm" model="report.paperformat">
+        <field name="name">Field Sales POS Receipt 80mm</field>
+        <field name="default" eval="False"/>
+        <field name="format">custom</field>
+        <field name="page_width">80</field>
+        <field name="page_height">200</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">3</field>
+        <field name="margin_bottom">3</field>
+        <field name="margin_left">3</field>
+        <field name="margin_right">3</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_report_field_sales_pos_receipt_80mm" model="ir.actions.report">
+        <field name="name">POS Receipt 80mm</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">field_sales_route_plan.report_field_sales_pos_receipt_80mm</field>
+        <field name="report_file">field_sales_route_plan.report_field_sales_pos_receipt_80mm</field>
+        <field name="paperformat_id" ref="field_sales_route_plan.paperformat_field_sales_pos_80mm"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'POS Receipt - %s' % (object.name)</field>
+    </record>
+
+    <template id="report_field_sales_pos_receipt_80mm">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page" style="width:74mm; font-family: Arial, sans-serif; font-size: 11px; color:#111;">
+                    <div style="text-align:center; margin-bottom:6px;">
+                        <div style="font-size:15px; font-weight:700;" t-esc="o.company_id.name"/>
+                        <div t-if="o.company_id.phone">Tel: <span t-esc="o.company_id.phone"/></div>
+                        <div t-if="o.company_id.vat">TIN/VAT: <span t-esc="o.company_id.vat"/></div>
+                        <div style="border-top:1px dashed #333; margin-top:5px; padding-top:5px; font-weight:700;">SALES RECEIPT</div>
+                    </div>
+
+                    <div style="margin-bottom:6px;">
+                        <div><strong>Order:</strong> <span t-esc="o.name"/></div>
+                        <div><strong>Date:</strong> <span t-field="o.date_order"/></div>
+                        <div><strong>Customer:</strong> <span t-esc="o.partner_id.display_name"/></div>
+                        <div t-if="o.user_id"><strong>Salesperson:</strong> <span t-esc="o.user_id.name"/></div>
+                    </div>
+
+                    <table style="width:100%; border-collapse:collapse; table-layout:fixed; font-size:10.5px; margin-top:4px;">
+                        <thead>
+                            <tr style="border-top:1px dashed #333; border-bottom:1px dashed #333;">
+                                <th style="width:38%; text-align:left; padding:4px 1px;">Item</th>
+                                <th style="width:14%; text-align:right; padding:4px 1px;">Qty</th>
+                                <th style="width:22%; text-align:right; padding:4px 1px;">Price</th>
+                                <th style="width:26%; text-align:right; padding:4px 1px;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="o.order_line.filtered(lambda l: not l.display_type)" t-as="line">
+                                <tr style="border-bottom:1px dotted #ccc; vertical-align:top;">
+                                    <td style="padding:4px 1px; word-break:break-word; overflow-wrap:anywhere;">
+                                        <strong t-esc="line.product_id.display_name"/>
+                                        <t t-if="line.product_id.default_code"><br/><small t-esc="line.product_id.default_code"/></t>
+                                    </td>
+                                    <td style="padding:4px 1px; text-align:right; white-space:nowrap;" t-esc="'%.2f' % line.product_uom_qty"/>
+                                    <td style="padding:4px 1px; text-align:right; white-space:nowrap;" t-esc="'%.2f' % line.price_unit"/>
+                                    <td style="padding:4px 1px; text-align:right; white-space:nowrap; font-weight:700;" t-esc="'%.2f' % line.price_subtotal"/>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-top:6px; border-top:1px dashed #333; padding-top:5px;">
+                        <div style="display:flex; justify-content:space-between;"><span>Subtotal</span><strong t-esc="'%.2f' % o.amount_untaxed"/></div>
+                        <div style="display:flex; justify-content:space-between;"><span>Tax</span><strong t-esc="'%.2f' % o.amount_tax"/></div>
+                        <div style="display:flex; justify-content:space-between; font-size:14px; margin-top:3px;"><span>Total</span><strong><span t-esc="o.currency_id.symbol"/> <span t-esc="'%.2f' % o.amount_total"/></strong></div>
+                    </div>
+
+                    <div style="text-align:center; margin-top:8px; border-top:1px dashed #333; padding-top:6px;">
+                        <div>Thank you for your purchase.</div>
+                        <div style="font-size:10px; margin-top:3px;">Generated from Field Sales POS Terminal</div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

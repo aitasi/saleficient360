@@ -1,0 +1,38 @@
+<odoo noupdate="1">
+    <record id="visit_purpose_marketing" model="sales.route.visit.purpose">
+        <field name="name">Marketing</field>
+        <field name="code">marketing</field>
+        <field name="category">marketing</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="visit_purpose_sales" model="sales.route.visit.purpose">
+        <field name="name">Sales</field>
+        <field name="code">sales</field>
+        <field name="category">sales</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="visit_purpose_delivery" model="sales.route.visit.purpose">
+        <field name="name">Delivery</field>
+        <field name="code">delivery</field>
+        <field name="category">delivery</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="visit_purpose_merchandising" model="sales.route.visit.purpose">
+        <field name="name">Merchandising Visit</field>
+        <field name="code">merchandising</field>
+        <field name="category">merchandising</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="visit_purpose_retail_sales" model="sales.route.visit.purpose">
+        <field name="name">Retail Sales Visit</field>
+        <field name="code">retail_sales</field>
+        <field name="category">retail_sales</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="visit_purpose_van_sales" model="sales.route.visit.purpose">
+        <field name="name">Van Sales</field>
+        <field name="code">van_sales</field>
+        <field name="category">van_sales</field>
+        <field name="sequence">60</field>
+    </record>
+</odoo>

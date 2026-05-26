@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="field_sales_route_plan.ClientMap" owl="1">
+        <div t-att-class="state.fullScreen ? 'fsrp-map-screen fsrp-map-fullscreen' : 'fsrp-map-screen'">
+            <div class="fsrp-map-toolbar fsrp-map-toolbar-pretty">
+                <div class="fsrp-map-title-block">
+                    <h2>Client Map</h2>
+                    <div class="fsrp-map-subtitle" t-if="!state.fullScreen">
+                        Default view shows clients planned or visited in the selected date range. The route line follows planned visit order for that period.
+                    </div>
+                </div>
+                <div class="fsrp-map-controls" t-if="!state.fullScreen">
+                    <div class="fsrp-map-action-pills">
+                        <button class="btn btn-light fsrp-map-pill" t-on-click="toggleRouteLine">
+                            <i class="fa fa-road"/> <t t-esc="state.showRouteLine ? 'Hide Route' : 'Show Route'"/>
+                        </button>
+                        <button class="btn btn-light fsrp-map-pill" t-on-click="toggleHeat">
+                            <i class="fa fa-fire"/> <t t-esc="state.showHeat ? 'Hide Heat' : 'Show Heat'"/>
+                        </button>
+                        <button class="btn btn-light fsrp-map-pill" t-on-click="toggleTeamMap">
+                            <i class="fa fa-users"/> <t t-esc="state.showTeam ? 'Hide Team' : 'Live Team'"/>
+                        </button>
+                        <button class="btn btn-light fsrp-map-pill" t-on-click="toggleNavigationMode">
+                            <i class="fa fa-location-arrow"/> <t t-esc="state.navigationMode ? 'Exit Navigation' : 'Navigation'"/>
+                        </button>
+                        <button class="btn btn-primary fsrp-map-pill fsrp-map-pill-primary" t-on-click="toggleFullScreen">
+                            <i class="fa fa-expand"/> View Full Screen
+                        </button>
+                    </div>
+                    <div class="fsrp-map-filters fsrp-map-filter-card">
+                        <div class="fsrp-filter-row fsrp-filter-row-pretty">
+                            <div class="fsrp-filter-field fsrp-route-filter">
+                                <label>Market Route</label>
+                                <select t-on-change="onRouteChange" t-att-value="state.selectedRouteId">
+                                    <option value="0">All Routes</option>
+                                    <t t-foreach="state.routes" t-as="route" t-key="route.id">
+                                        <option t-att-value="route.id"><t t-esc="route.name"/></option>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="fsrp-filter-field fsrp-show-filter">
+                                <label>Show</label>
+                                <select t-on-change="onModeChange" t-att-value="state.selectedMode">
+                                    <option value="today">Planned/visited in date range</option>
+                                    <option value="today_planned">Planned in date range</option>
+                                    <option value="today_visited">Visited in date range</option>
+                                    <option value="purchased_today">Purchased in date range</option>
+                                    <option value="dormant">Dormant / never bought</option>
+                                    <option value="overdue_14">Overdue 14+ days</option>
+                                    <option value="high_value">High value clients</option>
+                                    <option value="all">All route clients</option>
+                                </select>
+                            </div>
+                            <div class="fsrp-filter-field fsrp-date-filter">
+                                <label>From</label>
+                                <input type="date" t-on-change="onDateFromChange" t-att-value="state.dateFrom"/>
+                            </div>
+                            <div class="fsrp-filter-field fsrp-date-filter">
+                                <label>To</label>
+                                <input type="date" t-on-change="onDateToChange" t-att-value="state.dateTo"/>
+                            </div>
+                            <div class="fsrp-filter-field fsrp-date-reset">
+                                <button class="btn btn-light fsrp-today-btn" t-on-click="resetToday">Today</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="fsrp-map-actions fsrp-map-actions-fullscreen" t-if="state.fullScreen">
+                    <button class="btn btn-secondary" t-on-click="toggleRouteLine">
+                        <t t-esc="state.showRouteLine ? 'Hide Route Line' : 'Show Route Line'"/>
+                    </button>
+                    <button class="btn btn-secondary" t-on-click="toggleHeat">
+                        <t t-esc="state.showHeat ? 'Hide Heat' : 'Show Heat'"/>
+                    </button>
+                    <button class="btn btn-secondary" t-on-click="toggleTeamMap">
+                        <t t-esc="state.showTeam ? 'Hide Team' : 'Live Team'"/>
+                    </button>
+                    <button class="btn btn-secondary" t-on-click="toggleNavigationMode">
+                        <t t-esc="state.navigationMode ? 'Exit Navigation' : 'Navigation Mode'"/>
+                    </button>
+                    <button class="btn btn-primary" t-on-click="toggleFullScreen">Exit Full Screen</button>
+                </div>
+            </div>
+            <div class="fsrp-navigation-banner" t-if="state.navigationMode">
+                <strong>Live Navigation Mode</strong>
+                <span>Route line is highlighted and the map focuses the next planned stop.</span>
+                <button class="btn btn-sm btn-primary" t-on-click="focusNextStop">Focus Next Stop</button>
+            </div>
+            <div class="fsrp-map-summary fsrp-map-summary-modern">
+                <span><strong><t t-esc="state.summary.total || 0"/></strong> clients loaded</span>
+                <span><strong><t t-esc="state.summary.planned_today || 0"/></strong> planned</span>
+                <span><strong><t t-esc="state.summary.visited_today || 0"/></strong> visited</span>
+                <span><strong><t t-esc="state.summary.purchased_today || 0"/></strong> purchased</span>
+                <span t-if="state.summary.date_from"><strong><t t-esc="state.summary.date_from"/></strong> to <strong><t t-esc="state.summary.date_to"/></strong></span>
+            </div>
+            <div id="fsrp_client_map_canvas" class="fsrp-map-canvas"></div>
+            <div class="fsrp-map-legend fsrp-map-chip-legend">
+                <span><i class="fsrp-dot fsrp-dot-green"></i> Planned &amp; visited</span>
+                <span><i class="fsrp-dot fsrp-dot-orange"></i> Planned</span>
+                <span><i class="fsrp-dot fsrp-dot-blue"></i> Visited</span>
+                <span><i class="fsrp-dot fsrp-dot-purple"></i> Purchased</span>
+                <span><i class="fsrp-dot fsrp-dot-grey"></i> Other</span>
+                <span><i class="fsrp-heat-dot"></i> Sales heat</span>
+                <span><i class="fsrp-team-dot"></i> Live team</span>
+            </div>
+            <div class="fsrp-map-list" t-if="!state.fullScreen">
+                <table>
+                    <thead><tr><th>Client</th><th>Status</th><th>Route</th><th>Class</th><th>Ageing</th><th>Days Since Purchase</th><th>Latitude</th><th>Longitude</th><th>Address</th></tr></thead>
+                    <tbody>
+                        <t t-foreach="state.clients" t-as="client" t-key="client.id">
+                            <tr>
+                                <td><t t-esc="client.name"/></td><td><t t-esc="client.status_label || ''"/></td><td><t t-esc="client.route || ''"/></td>
+                                <td><t t-esc="client.classification || ''"/></td><td><t t-esc="client.age_bucket || ''"/></td><td><t t-esc="client.days_since_last_purchase || 0"/></td>
+                                <td><t t-esc="client.latitude || ''"/></td><td><t t-esc="client.longitude || ''"/></td>
+                                <td><t t-esc="client.address || ''"/></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </t>
+    <t t-name="field_sales_route_plan.GPSCapture" owl="1">
+        <div class="fsrp-gps-capture">
+            <h2><t t-esc="title"/></h2>
+            <p><t t-esc="state.message"/></p>
+            <button class="btn btn-primary" t-on-click="backToVisit" t-att-disabled="state.working">Open Visit Form</button>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="field_sales_route_plan.FieldSimpleMode" owl="1">
+        <div class="fsrp-simple-screen fsrp-collapsible-work">
+            <div class="fsrp-simple-hero fsrp-compact-hero">
+                <div class="fsrp-hero-person">
+                    <img class="fsrp-hero-avatar" t-att-src="((state.data.user || {}).photo_url) || ('/web/image/res.users/' + (((state.data.user || {}).id) || '') + '/avatar_128')" alt="Employee"/>
+                    <div>
+                        <h1>My Field Work</h1>
+                        <p>Welcome 👋 <t t-esc="(state.data.user || {}).name || 'Salesperson'"/> <span>•</span> <t t-esc="state.data.login_datetime || ''"/></p>
+                    </div>
+                </div>
+                <div class="fsrp-simple-hero-actions fsrp-hero-action-grid">
+                    <button class="btn btn-light" t-on-click="refresh">🔄 Refresh</button>
+                    <button t-if="state.data.morning_briefing" class="btn btn-warning" t-on-click="openMorningBriefing">☀️ Morning Briefing</button>
+                    <button class="btn btn-outline-primary" t-on-click="openRequests">📝 Requests</button>
+                    <button class="btn btn-primary" t-on-click="startTour">🎓 Tour Guide</button>
+                </div>
+            </div>
+            <div class="fsrp-date-filter-bar fsrp-date-filter-compact">
+                <label>From <input type="date" t-att-value="state.date_from" t-on-change="setDateFrom"/></label>
+                <label>To <input type="date" t-att-value="state.date_to" t-on-change="setDateTo"/></label>
+                <button class="btn btn-primary" t-on-click="applyDateFilter">Apply</button>
+                <button class="btn btn-light" t-on-click="resetDateFilter">Today</button>
+            </div>
+            <t t-if="state.loading"><div class="fsrp-simple-card">Loading today’s route...</div></t>
+            <t t-else="">
+                <div class="fsrp-ai-modal-backdrop" t-if="state.showMorningBriefing and state.data.morning_briefing" t-on-click="closeMorningBriefing">
+                    <div class="fsrp-ai-modal" t-attf-class="fsrp-ai-modal fsrp-ai-#{(state.data.morning_briefing || {}).tone || 'info'}" t-on-click.stop="">
+                        <button class="fsrp-ai-modal-close" t-on-click="closeMorningBriefing">×</button>
+                        <div class="fsrp-ai-gold-orb fsrp-orb-one">★</div>
+                        <div class="fsrp-ai-gold-orb fsrp-orb-two">⚡</div>
+                        <div class="fsrp-morning-ai-top fsrp-ai-compact-top">
+                            <div>
+                                <span class="fsrp-ai-chip">☀️ Daily Mission Briefing</span>
+                                <h2><t t-esc="(state.data.morning_briefing || {}).title || 'Good Morning'"/></h2>
+                                <p><t t-esc="(state.data.morning_briefing || {}).subtitle || ''"/></p>
+                            </div>
+                            <div class="fsrp-ai-route-pill">🏁 <t t-esc="(state.data.morning_briefing || {}).route || 'No route'"/></div>
+                        </div>
+                        <div class="fsrp-ai-brief-grid fsrp-ai-game-grid">
+                            <div class="fsrp-ai-game-card"><span>🎯 Planned</span><strong><t t-esc="(state.data.morning_briefing || {}).planned_clients || 0"/></strong></div>
+                            <div class="fsrp-ai-game-card"><span>⚠️ Missed</span><strong><t t-esc="(state.data.morning_briefing || {}).missed_yesterday || 0"/></strong></div>
+                            <div class="fsrp-ai-game-card"><span>🏆 Target Gap</span><strong><t t-esc="(state.data.morning_briefing || {}).target_gap || 0"/>%</strong></div>
+                            <div class="fsrp-ai-game-card"><span>📦 SKU Gap</span><strong><t t-esc="(state.data.morning_briefing || {}).sku_gap || 0"/>%</strong></div>
+                        </div>
+                        <div class="fsrp-ai-brief-points fsrp-ai-compact-points">
+                            <t t-foreach="(state.data.morning_briefing || {}).points || []" t-as="point" t-key="point_index">
+                                <div>✨ <t t-esc="point"/></div>
+                            </t>
+                        </div>
+                        <div class="fsrp-ai-recommendation fsrp-ai-mini-reco">🤖 <strong>Coach:</strong> <t t-esc="(state.data.morning_briefing || {}).recommendation || ''"/></div>
+                    </div>
+                </div>
+
+                <div class="fsrp-simple-accordion">
+                    <div class="fsrp-accordion-section fsrp-section-primary">
+                        <button class="fsrp-section-toggle" t-on-click="() => this.toggleSection('actions')">
+                            <span>⚡ Quick Actions</span>
+                            <small>Create plans, start visits, navigate, and open assistant</small>
+                            <b><t t-esc="state.sections.actions ? '−' : '+'"/></b>
+                        </button>
+                        <div t-if="state.sections.actions" class="fsrp-section-body">
+                            <div class="fsrp-action-board">
+                                <div class="fsrp-action-row fsrp-action-row-main">
+                                    <button class="btn btn-primary fsrp-action-primary" t-on-click="startMyDay">▶ Start / Continue</button>
+                                    <button class="btn btn-success fsrp-action-primary" t-on-click="createRoutePlan">＋ New Route Plan</button>
+                                </div>
+                                <div class="fsrp-action-row fsrp-action-row-secondary">
+                                    
+                                    <button class="btn btn-secondary" t-on-click="nextClient">Next Client</button>
+                                    <button t-if="state.data.can_quick_sale_unrestricted" class="btn btn-success" t-on-click="openQuickSalesOrder">⚡ Van Sales</button>
+                                    <button class="btn btn-outline-success" t-on-click="openDeliveryMode">Delivery</button>
+                                    
+                                    <button class="btn btn-outline-primary" t-on-click="openClientMap">Map</button>
+                                    <button class="btn btn-info" t-on-click="openLiveNavigation">Navigation</button>
+                                    <button class="btn btn-dark" t-on-click="askSalesAssistant">AI Assistant</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-accordion-section fsrp-soft-section fsrp-section-period">
+                        <button class="fsrp-section-toggle" t-on-click="() => this.toggleSection('period')">
+                            <span>📊 Section A — Period Metrics</span>
+                            <small>Selected period visits, orders, sales and payments</small>
+                            <b><t t-esc="state.sections.period ? '−' : '+'"/></b>
+                        </button>
+                        <div t-if="state.sections.period" class="fsrp-section-body">
+                            <div class="fsrp-selected-period-title">Selected Period: <strong><t t-esc="(state.data.period_kpis || {}).selected_label || state.date_from"/></strong></div>
+                            <div class="fsrp-modern-kpi-grid fsrp-grid-period">
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">👥</div><span>Period Visits</span><strong><t t-esc="(state.data.period_kpis || {}).selected_visits || 0"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">🛒</div><span>Period Orders</span><strong><t t-esc="(state.data.period_kpis || {}).selected_orders || 0"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">💰</div><span>Period Sales</span><strong><t t-esc="(state.data.period_kpis || {}).selected_sales_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">🧾</div><span>Period POS Order</span><strong><t t-esc="(state.data.period_kpis || {}).selected_pos_order_total_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">💳</div><span>Period Payments</span><strong><t t-esc="(state.data.period_kpis || {}).selected_pos_payments_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">⚠️</div><span>Period POS Amount Due</span><strong><t t-esc="(state.data.period_kpis || {}).selected_amount_due_fmt || '0.00'"/></strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-accordion-section fsrp-soft-section fsrp-section-today">
+                        <button class="fsrp-section-toggle" t-on-click="() => this.toggleSection('today')">
+                            <span>☀️ Section B — Today</span>
+                            <small>Today visits, sales orders, POS order, payments and amount due</small>
+                            <b><t t-esc="state.sections.today ? '−' : '+'"/></b>
+                        </button>
+                        <div t-if="state.sections.today" class="fsrp-section-body">
+                            <div class="fsrp-modern-kpi-grid fsrp-grid-today">
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">👥</div><span>Today Visits</span><strong><t t-esc="(state.data.period_kpis || {}).today_visits || 0"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">🛒</div><span>Today Orders</span><strong><t t-esc="(state.data.period_kpis || {}).today_orders || 0"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">💰</div><span>Today Sales</span><strong><t t-esc="(state.data.period_kpis || {}).today_sales_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">🧾</div><span>Today POS Order</span><strong><t t-esc="(state.data.period_kpis || {}).today_pos_order_total_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">💳</div><span>Today POS Payments</span><strong><t t-esc="(state.data.period_kpis || {}).today_pos_payments_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">⚠️</div><span>Today Amount Due</span><strong><t t-esc="(state.data.period_kpis || {}).today_amount_due_fmt || '0.00'"/></strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-accordion-section fsrp-soft-section fsrp-section-mtd">
+                        <button class="fsrp-section-toggle" t-on-click="() => this.toggleSection('mtd')">
+                            <span>🟠 Section C — MTD</span>
+                            <small>Month-to-date visits, sales orders, POS order, payments and amount due</small>
+                            <b><t t-esc="state.sections.mtd ? '−' : '+'"/></b>
+                        </button>
+                        <div t-if="state.sections.mtd" class="fsrp-section-body">
+                            <div class="fsrp-modern-kpi-grid fsrp-grid-mtd">
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">👥</div><span>MTD Visits</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_visits || 0"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">🛒</div><span>MTD Orders</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_orders || 0"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">💰</div><span>MTD Sales</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_sales_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">🧾</div><span>MTD POS Order</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_pos_order_total_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">💳</div><span>MTD POS Payments</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_pos_payments_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">⚠️</div><span>MTD Amount Due</span><strong><t t-esc="(state.data.period_kpis || {}).mtd_amount_due_fmt || '0.00'"/></strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-accordion-section fsrp-soft-section fsrp-section-ytd">
+                        <button class="fsrp-section-toggle" t-on-click="() => this.toggleSection('ytd')">
+                            <span>🟣 Section D — YTD</span>
+                            <small>Year-to-date visits, sales orders, POS order, payments and amount due</small>
+                            <b><t t-esc="state.sections.ytd ? '−' : '+'"/></b>
+                        </button>
+                        <div t-if="state.sections.ytd" class="fsrp-section-body">
+                            <div class="fsrp-modern-kpi-grid fsrp-grid-ytd">
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">👥</div><span>YTD Visits</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_visits || 0"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">🛒</div><span>YTD Orders</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_orders || 0"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">💰</div><span>YTD Sales</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_sales_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">🧾</div><span>YTD POS Order</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_pos_order_total_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">💳</div><span>YTD POS Payments</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_pos_payments_fmt || '0.00'"/></strong></div>
+                                <div class="fsrp-modern-kpi-card"><div class="fsrp-kpi-icon">⚠️</div><span>YTD Amount Due</span><strong><t t-esc="(state.data.period_kpis || {}).ytd_amount_due_fmt || '0.00'"/></strong></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-live-kpi-strip fsrp-fmcg-live-strip fsrp-modern-mini-strip">
+                        <div><span>Merch Visits</span><b><t t-esc="(state.data.fmcg_metrics || {}).merch_visits || 0"/></b></div>
+                        <div><span>Retail Visits</span><b><t t-esc="(state.data.fmcg_metrics || {}).retail_visits || 0"/></b></div>
+                        <div><span>SKU Score</span><b><t t-esc="(state.data.fmcg_metrics || {}).merch_sku_score || 0"/>%</b></div>
+                        <div><span>Shelf Score</span><b><t t-esc="(state.data.fmcg_metrics || {}).merch_shelf_score || 0"/>%</b></div>
+                    </div>
+
+                    <div class="fsrp-accordion-section">
+                        <button class="fsrp-section-toggle" t-on-click="() => this.toggleSection('overview')">
+                            <span>🧭 Route &amp; Device Overview</span>
+                            <small>Route progress, sales, coverage, battery, and network</small>
+                            <b><t t-esc="state.sections.overview ? '−' : '+'"/></b>
+                        </button>
+                        <div t-if="state.sections.overview" class="fsrp-section-body">
+                            <div class="fsrp-simple-grid">
+                                <div class="fsrp-simple-card"><span>Route</span><strong><t t-esc="state.data.route || 'No route today'"/></strong><small><t t-esc="state.data.plan_name || ''"/></small></div>
+                                <div class="fsrp-simple-card"><span>Visits</span><strong><t t-esc="state.data.visited || 0"/> / <t t-esc="state.data.planned || 0"/></strong><small>Completed today</small></div>
+                                <div class="fsrp-simple-card"><span>Productive</span><strong><t t-esc="state.data.productive || 0"/></strong><small>Successful calls</small></div>
+                                <div class="fsrp-simple-card"><span>POS Order Total</span><strong><t t-esc="state.data.today_pos_order_total_fmt || state.data.sales || '0.00'"/></strong><small>Generated from Sales Orders today / route</small></div>
+                                <div class="fsrp-simple-card fsrp-coverage-card"><span>Route Clients Visited</span><strong><t t-esc="state.data.visited_route_clients || 0"/> / <t t-esc="state.data.route_client_total || 0"/></strong><small><t t-esc="state.data.visited_route_percent || 0"/>% of assigned route clients</small></div>
+                                <div class="fsrp-simple-card fsrp-coverage-card"><span>Route Clients Purchased</span><strong><t t-esc="state.data.purchased_route_clients || 0"/> / <t t-esc="state.data.route_client_total || 0"/></strong><small><t t-esc="state.data.purchased_route_percent || 0"/>% of assigned route clients</small></div>
+                                <div class="fsrp-simple-card fsrp-device-card">
+                                    <span>Device Battery</span>
+                                    <strong><t t-esc="state.device.battery_level || 0"/>%</strong>
+                                    <small><t t-esc="state.device.battery_charging ? 'Charging' : (state.device.battery_status || 'Unknown')"/></small>
+                                </div>
+                                <div class="fsrp-simple-card fsrp-device-card">
+                                    <span>Network</span>
+                                    <strong><t t-esc="state.device.network_online === false ? 'Offline' : (state.device.network_status || 'Unknown')"/></strong>
+                                    <small><t t-esc="state.device.effective_type || ''"/> <t t-if="state.device.downlink_mbps">• <t t-esc="state.device.downlink_mbps"/> Mbps</t></small>
+                                </div>
+                                <div t-attf-class="fsrp-simple-card fsrp-device-card fsrp-device-alert-#{state.device.alert_level || '0_ok'}">
+                                    <span>Device Alert</span>
+                                    <strong><t t-esc="state.device.alert_level == '2_critical' ? 'Critical' : (state.device.alert_level == '1_warning' ? 'Warning' : 'OK')"/></strong>
+                                    <small><t t-esc="state.device.alert_message || 'Device OK'"/></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-accordion-section">
+                        <button class="fsrp-section-toggle" t-on-click="() => this.toggleSection('targets')">
+                            <span>🎯 My Sales Order Targets</span>
+                            <small>Current active personal targets</small>
+                            <b><t t-esc="state.sections.targets ? '−' : '+'"/></b>
+                        </button>
+                        <div t-if="state.sections.targets" class="fsrp-section-body">
+                            <div class="fsrp-target-section">
+                                <div class="fsrp-target-grid">
+                                    <t t-if="!(state.data.personal_targets || []).length">
+                                        <div class="fsrp-target-card fsrp-target-empty">No active personal target.</div>
+                                    </t>
+                                    <t t-foreach="state.data.personal_targets || []" t-as="target" t-key="target.id">
+                                        <div t-attf-class="fsrp-target-card fsrp-target-#{target.state}">
+                                            <div class="fsrp-target-top"><strong><t t-esc="target.name"/></strong><span><t t-esc="target.progress"/>%</span></div>
+                                            <div class="fsrp-target-meta"><t t-esc="target.route || target.scope"/> <t t-if="target.salesperson">• <t t-esc="target.salesperson"/></t></div>
+                                            <div class="fsrp-progress"><div t-att-style="'width:' + target.progress + '%'"/></div>
+                                            <div class="fsrp-target-numbers">
+                                                <span>Amount: <b><t t-esc="target.amount_done"/></b> / <t t-esc="target.amount_target"/></span>
+                                                <span>Orders: <b><t t-esc="target.count_done"/></b> / <t t-esc="target.count_target"/></span>
+                                            </div>
+                                            <small><t t-esc="target.period"/></small>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-accordion-section" t-if="(state.data.smart_alerts || []).length">
+                        <button class="fsrp-section-toggle" t-on-click="() => this.toggleSection('alerts')">
+                            <span>🔔 Smart Alerts</span>
+                            <small><t t-esc="(state.data.smart_alerts || []).length"/> active alert(s)</small>
+                            <b><t t-esc="state.sections.alerts ? '−' : '+'"/></b>
+                        </button>
+                        <div t-if="state.sections.alerts" class="fsrp-section-body">
+                            <div class="fsrp-smart-alert-strip">
+                                <t t-foreach="state.data.smart_alerts || []" t-as="alert" t-key="alert_index">
+                                    <div t-attf-class="fsrp-smart-alert fsrp-smart-alert-#{alert.level || 'info'}">🔔 <t t-esc="alert.message"/></div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-accordion-section">
+                        <button class="fsrp-section-toggle" t-on-click="() => this.toggleSection('assistant')">
+                            <span>🤖 Next Client &amp; Sales Assistant</span>
+                            <small>Next best action, client health, and reorder suggestions</small>
+                            <b><t t-esc="state.sections.assistant ? '−' : '+'"/></b>
+                        </button>
+                        <div t-if="state.sections.assistant" class="fsrp-section-body">
+                            <div class="fsrp-modern-workbench">
+                                <div class="fsrp-next-client-card fsrp-modern-next">
+                                    <span>Next Client</span>
+                                    <strong><t t-esc="state.data.next_client || 'No pending client'"/></strong>
+                                    <small><t t-esc="state.data.next_status || ''"/></small>
+                                    <div t-attf-class="fsrp-health-pill fsrp-health-#{state.data.client_health_level || 'neutral'}"><t t-esc="state.data.client_health || ''"/></div>
+                                </div>
+                                <div class="fsrp-smart-card">
+                                    <div class="fsrp-card-heading">Smart Suggestions</div>
+                                    <t t-if="!(state.data.next_best_actions || []).length"><p>No suggestions yet. Select or start a client visit.</p></t>
+                                    <t t-foreach="state.data.next_best_actions || []" t-as="action" t-key="action_index">
+                                        <div class="fsrp-suggestion-line">⚡ <t t-esc="action"/></div>
+                                    </t>
+                                    <div class="fsrp-suggested-products" t-if="(state.data.suggested_products || []).length">
+                                        <span>Likely reorder products</span>
+                                        <t t-foreach="state.data.suggested_products || []" t-as="prod" t-key="prod.name">
+                                            <b><t t-esc="prod.name"/> · <t t-esc="prod.qty"/></b>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>
