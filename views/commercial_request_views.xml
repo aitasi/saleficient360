@@ -1,0 +1,307 @@
+<odoo>
+
+    <record id="view_field_sales_commercial_request_kanban" model="ir.ui.view">
+        <field name="name">field.sales.commercial.request.kanban.mobile</field>
+        <field name="model">field.sales.commercial.request</field>
+        <field name="arch" type="xml">
+            <kanban string="Requests" class="o_kanban_mobile fsrp-request-kanban" default_group_by="state" quick_create="false" sample="1">
+                <field name="name"/>
+                <field name="title"/>
+                <field name="request_type"/>
+                <field name="partner_id"/>
+                <field name="route_id"/>
+                <field name="requested_by_id"/>
+                <field name="assigned_to_id"/>
+                <field name="urgency"/>
+                <field name="expected_value_impact"/>
+                <field name="currency_id"/>
+                <field name="state"/>
+                <field name="create_date"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click fsrp-request-card fsrp-request-card-#{record.state.raw_value || 'draft'}">
+                            <div class="fsrp-request-card-top">
+                                <div>
+                                    <span class="fsrp-request-card-ref"><field name="name"/></span>
+                                    <strong class="fsrp-request-card-title"><field name="title"/></strong>
+                                </div>
+                                <span t-attf-class="fsrp-request-card-state fsrp-state-#{record.state.raw_value || 'draft'}"><field name="state"/></span>
+                            </div>
+
+                            <div class="fsrp-request-card-meta">
+                                <span><i class="fa fa-tag"/> <field name="request_type"/></span>
+                                <span t-if="record.urgency.raw_value"><i class="fa fa-bolt"/> <field name="urgency"/></span>
+                            </div>
+
+                            <div class="fsrp-request-card-client" t-if="record.partner_id.raw_value">
+                                <i class="fa fa-building-o"/>
+                                <field name="partner_id"/>
+                            </div>
+
+                            <div class="fsrp-request-card-grid">
+                                <div>
+                                    <small>Value / Discount</small>
+                                    <b><field name="expected_value_impact" widget="monetary" options="{'currency_field': 'currency_id'}"/></b>
+                                </div>
+                                <div t-if="record.assigned_to_id.raw_value">
+                                    <small>Approver</small>
+                                    <b><field name="assigned_to_id"/></b>
+                                </div>
+                            </div>
+
+                            <div class="fsrp-request-card-bottom">
+                                <span t-if="record.requested_by_id.raw_value"><i class="fa fa-user"/> <field name="requested_by_id"/></span>
+                                <span t-if="record.route_id.raw_value"><i class="fa fa-map-marker"/> <field name="route_id"/></span>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_field_sales_commercial_request_tree" model="ir.ui.view">
+        <field name="name">field.sales.commercial.request.tree</field>
+        <field name="model">field.sales.commercial.request</field>
+        <field name="arch" type="xml">
+            <tree string="Requests" decoration-success="state == 'approved'" decoration-danger="state == 'rejected'" decoration-warning="state in ('pending','clarification')">
+                <field name="name" string="Ref"/>
+                <field name="title"/>
+                <field name="request_type"/>
+                <field name="partner_id" string="Client"/>
+                <field name="route_id"/>
+                <field name="requested_by_id"/>
+                <field name="assigned_to_id" string="Approver"/>
+                <field name="urgency"/>
+                <field name="expected_value_impact"/>
+                <field name="state"/>
+                <field name="create_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_field_sales_commercial_request_form" model="ir.ui.view">
+        <field name="name">field.sales.commercial.request.form.responsive</field>
+        <field name="model">field.sales.commercial.request</field>
+        <field name="arch" type="xml">
+            <form string="Request" class="fsrp-request-form">
+                <header>
+                    <button name="action_submit" type="object" string="Submit" class="btn-primary" states="draft,clarification"/>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary" states="pending" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager,sales_team.group_sale_manager"/>
+                    <button name="action_reject" type="object" string="Reject" class="btn-secondary" states="pending" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager,sales_team.group_sale_manager"/>
+                    <button name="action_request_clarification" type="object" string="Clarify" class="btn-secondary" states="pending" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager,sales_team.group_sale_manager"/>
+                    <button name="action_cancel" type="object" string="Cancel" class="btn-secondary" states="draft,pending,clarification"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,pending,approved,rejected,clarification"/>
+                </header>
+                <sheet>
+                    <div class="fsrp-request-hero">
+                        <div>
+                            <span class="fsrp-request-chip">📝 Field Request</span>
+                            <h1><field name="title" placeholder="What do you need approval/help for?"/></h1>
+                            <p><field name="name" readonly="1" nolabel="1"/> • Approval message only, no automatic Sales Order changes.</p>
+                        </div>
+                        <div class="fsrp-request-state-card">
+                            <span>Status</span>
+                            <strong><field name="state" readonly="1" nolabel="1"/></strong>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info fsrp-request-alert" role="alert">
+                        Use this for fixed-amount discounts, pricing, credit, stock, delivery, complaints, or any client request. Approval only sends a response message; it does not edit the Sales Order.
+                    </div>
+
+                    <div class="fsrp-request-stepper">
+                        <div class="fsrp-request-step active"><span>1</span><strong>Request Setup</strong><small>Type, client and context</small></div>
+                        <div class="fsrp-request-step"><span>2</span><strong>Details &amp; Response</strong><small>Amount, note and approval</small></div>
+                    </div>
+
+                    <notebook class="fsrp-request-tabs fsrp-request-two-step">
+                        <page string="Step 1 — Request Setup">
+                            <group class="fsrp-request-grid" col="2">
+                                <group string="Request Details">
+                                    <field name="request_type"/>
+                                    <field name="urgency"/>
+                                    <field name="assigned_to_id" string="Send To" options="{'no_create': True, 'no_create_edit': True}"/>
+                                    <field name="requested_by_id" readonly="1"/>
+                                </group>
+                                <group string="Client Context">
+                                    <field name="partner_id" string="Client"/>
+                                    <field name="route_id" required="0"/>
+                                    <field name="route_visit_id"/>
+                                    <field name="sale_order_id" required="0"/>
+                                    <field name="plan_id" required="0"/>
+                                </group>
+                            </group>
+                            <field name="description" nolabel="1" placeholder="Briefly explain what the client requested, why it matters, and what action you want."/>
+                        </page>
+                        <page string="Step 2 — Details &amp; Response">
+                            <group class="fsrp-request-grid" col="2">
+                                <group string="Value / Fixed Discount" attrs="{'invisible': [('request_type', 'not in', ['extra_discount','special_pricing','free_goods','credit_extension','payment_terms','overdue_release'])]}" >
+                                    <field name="currency_id" invisible="1"/>
+                                    <field name="expected_value_impact" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                    <field name="current_discount" widget="monetary" options="{'currency_field': 'currency_id'}" attrs="{'invisible': [('request_type', 'not in', ['extra_discount','special_pricing','free_goods'])]}"/>
+                                    <field name="requested_discount" widget="monetary" options="{'currency_field': 'currency_id'}" attrs="{'invisible': [('request_type', 'not in', ['extra_discount','special_pricing','free_goods'])]}"/>
+                                </group>
+                                <group string="Approval Response">
+                                    <field name="approved_by_id" readonly="1"/>
+                                    <field name="approved_date" readonly="1"/>
+                                </group>
+                            </group>
+                            <field name="approved_message" nolabel="1" placeholder="Approver response. Example: Approved with the requested fixed discount amount. No automatic Sales Order update was made."/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_field_sales_commercial_request_search" model="ir.ui.view">
+        <field name="name">field.sales.commercial.request.search</field>
+        <field name="model">field.sales.commercial.request</field>
+        <field name="arch" type="xml">
+            <search string="Requests">
+                <field name="name"/>
+                <field name="title"/>
+                <field name="partner_id"/>
+                <field name="route_id"/>
+                <field name="requested_by_id"/>
+                <field name="assigned_to_id"/>
+                <filter name="pending" string="Pending" domain="[('state','=','pending')]"/>
+                <filter name="approved" string="Approved" domain="[('state','=','approved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state','=','rejected')]"/>
+                <filter name="my_requests" string="My Requests" domain="[('requested_by_id','=',uid)]"/>
+                <filter name="assigned_to_me" string="Assigned to Me" domain="[('assigned_to_id','=',uid)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_state" string="Status" context="{'group_by':'state'}"/>
+                    <filter name="group_type" string="Request Type" context="{'group_by':'request_type'}"/>
+                    <filter name="group_route" string="Route" context="{'group_by':'route_id'}"/>
+                    <filter name="group_client" string="Client" context="{'group_by':'partner_id'}"/>
+                    <filter name="group_user" string="Requested By" context="{'group_by':'requested_by_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_field_sales_commercial_request" model="ir.actions.act_window">
+        <field name="name">Requests</field>
+        <field name="res_model">field.sales.commercial.request</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'search_default_pending': 1}</field>
+    </record>
+
+    <menuitem id="menu_field_sales_commercial_request" name="Requests" parent="menu_field_sales_planning" action="action_field_sales_commercial_request" sequence="27" groups="field_sales_route_plan.group_field_sales_user,field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_field_sales_commercial_request_report" name="Requests" parent="menu_field_sales_reports" action="action_field_sales_commercial_request" sequence="22" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+
+    <record id="view_route_visit_form_commercial_request_inherit" model="ir.ui.view">
+        <field name="name">sales.route.visit.form.requests.inherit</field>
+        <field name="model">sales.route.visit</field>
+        <field name="inherit_id" ref="field_sales_route_plan.view_route_visit_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_create_commercial_request" type="object" string="Request" class="btn-secondary"/>
+                <button name="action_view_commercial_requests" type="object" string="Requests" class="btn-secondary" attrs="{'invisible': [('commercial_request_count', '=', 0)]}"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <field name="commercial_request_count" invisible="1"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Requests">
+                    <field name="commercial_request_ids" context="{'default_route_visit_id': active_id}" mode="kanban,tree">
+                        <kanban class="o_kanban_mobile fsrp-request-kanban" quick_create="false">
+                            <field name="name"/>
+                            <field name="title"/>
+                            <field name="request_type"/>
+                            <field name="partner_id"/>
+                            <field name="assigned_to_id"/>
+                            <field name="urgency"/>
+                            <field name="expected_value_impact"/>
+                            <field name="currency_id"/>
+                            <field name="state"/>
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div t-attf-class="oe_kanban_global_click fsrp-request-card fsrp-request-card-#{record.state.raw_value || 'draft'}">
+                                        <div class="fsrp-request-card-top">
+                                            <div><span class="fsrp-request-card-ref"><field name="name"/></span><strong class="fsrp-request-card-title"><field name="title"/></strong></div>
+                                            <span t-attf-class="fsrp-request-card-state fsrp-state-#{record.state.raw_value || 'draft'}"><field name="state"/></span>
+                                        </div>
+                                        <div class="fsrp-request-card-meta"><span><i class="fa fa-tag"/> <field name="request_type"/></span><span t-if="record.urgency.raw_value"><i class="fa fa-bolt"/> <field name="urgency"/></span></div>
+                                        <div class="fsrp-request-card-client" t-if="record.partner_id.raw_value"><i class="fa fa-building-o"/> <field name="partner_id"/></div>
+                                        <div class="fsrp-request-card-grid"><div><small>Value / Discount</small><b><field name="expected_value_impact" widget="monetary" options="{'currency_field': 'currency_id'}"/></b></div><div t-if="record.assigned_to_id.raw_value"><small>Approver</small><b><field name="assigned_to_id"/></b></div></div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        <tree>
+                            <field name="name"/>
+                            <field name="request_type"/>
+                            <field name="title"/>
+                            <field name="assigned_to_id"/>
+                            <field name="urgency"/>
+                            <field name="expected_value_impact"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_form_commercial_request_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.requests.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_create_commercial_request" type="object" string="Request" class="btn-secondary"/>
+                <button name="action_view_commercial_requests" type="object" string="Requests" class="btn-secondary" attrs="{'invisible': [('commercial_request_count', '=', 0)]}"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <field name="commercial_request_count" invisible="1"/>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Requests">
+                    <field name="commercial_request_ids" context="{'default_sale_order_id': active_id}" mode="kanban,tree">
+                        <kanban class="o_kanban_mobile fsrp-request-kanban" quick_create="false">
+                            <field name="name"/>
+                            <field name="title"/>
+                            <field name="request_type"/>
+                            <field name="partner_id"/>
+                            <field name="assigned_to_id"/>
+                            <field name="urgency"/>
+                            <field name="expected_value_impact"/>
+                            <field name="currency_id"/>
+                            <field name="state"/>
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div t-attf-class="oe_kanban_global_click fsrp-request-card fsrp-request-card-#{record.state.raw_value || 'draft'}">
+                                        <div class="fsrp-request-card-top">
+                                            <div><span class="fsrp-request-card-ref"><field name="name"/></span><strong class="fsrp-request-card-title"><field name="title"/></strong></div>
+                                            <span t-attf-class="fsrp-request-card-state fsrp-state-#{record.state.raw_value || 'draft'}"><field name="state"/></span>
+                                        </div>
+                                        <div class="fsrp-request-card-meta"><span><i class="fa fa-tag"/> <field name="request_type"/></span><span t-if="record.urgency.raw_value"><i class="fa fa-bolt"/> <field name="urgency"/></span></div>
+                                        <div class="fsrp-request-card-client" t-if="record.partner_id.raw_value"><i class="fa fa-building-o"/> <field name="partner_id"/></div>
+                                        <div class="fsrp-request-card-grid"><div><small>Value / Discount</small><b><field name="expected_value_impact" widget="monetary" options="{'currency_field': 'currency_id'}"/></b></div><div t-if="record.assigned_to_id.raw_value"><small>Approver</small><b><field name="assigned_to_id"/></b></div></div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                        <tree>
+                            <field name="name"/>
+                            <field name="request_type"/>
+                            <field name="title"/>
+                            <field name="assigned_to_id"/>
+                            <field name="urgency"/>
+                            <field name="expected_value_impact"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

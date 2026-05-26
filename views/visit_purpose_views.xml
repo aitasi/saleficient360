@@ -1,0 +1,39 @@
+<odoo>
+    <record id="view_sales_route_visit_purpose_tree" model="ir.ui.view">
+        <field name="name">sales.route.visit.purpose.tree</field>
+        <field name="model">sales.route.visit.purpose</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="category"/>
+                <field name="code"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_sales_route_visit_purpose_form" model="ir.ui.view">
+        <field name="name">sales.route.visit.purpose.form</field>
+        <field name="model">sales.route.visit.purpose</field>
+        <field name="arch" type="xml">
+            <form string="Visit Purpose">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="category"/>
+                        <field name="code"/>
+                        <field name="sequence"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sales_route_visit_purpose" model="ir.actions.act_window">
+        <field name="name">Visit Purposes</field>
+        <field name="res_model">sales.route.visit.purpose</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

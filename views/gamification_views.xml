@@ -1,0 +1,33 @@
+<odoo>
+    <record id="view_game_score_tree" model="ir.ui.view">
+        <field name="name">sales.route.game.score.tree</field>
+        <field name="model">sales.route.game.score</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="badge in ('gold','champion')">
+                <field name="score_date"/>
+                <field name="user_id"/>
+                <field name="route_id"/>
+                <field name="visits_done"/>
+                <field name="productive_calls"/>
+                <field name="sales_amount"/>
+                <field name="total_points"/>
+                <field name="badge"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_game_score_kanban" model="ir.ui.view">
+        <field name="name">sales.route.game.score.kanban</field>
+        <field name="model">sales.route.game.score</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="user_id"/><field name="total_points"/><field name="badge"/><field name="visits_done"/><field name="productive_calls"/>
+                <templates><t t-name="kanban-box"><div class="oe_kanban_global_click o_kanban_record"><strong><field name="user_id"/></strong><div>Points: <field name="total_points"/></div><div>Badge: <field name="badge"/></div><div>Visits: <field name="visits_done"/> | Productive: <field name="productive_calls"/></div></div></t></templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="action_game_score" model="ir.actions.act_window">
+        <field name="name">Sales Gamification</field>
+        <field name="res_model">sales.route.game.score</field>
+        <field name="view_mode">kanban,tree,graph,pivot</field>
+    </record>
+</odoo>

@@ -1,0 +1,127 @@
+<odoo>
+    <record id="view_device_status_tree" model="ir.ui.view">
+        <field name="name">sales.route.device.status.tree</field>
+        <field name="model">sales.route.device.status</field>
+        <field name="arch" type="xml">
+            <tree string="Field Device Status" decoration-danger="alert_level == '2_critical'" decoration-warning="alert_level == '1_warning'" decoration-success="alert_level == '0_ok'">
+                <header>
+                    <button name="action_refresh_smart_alerts" type="object" string="Refresh Smart Alerts" class="btn-primary"/>
+                    <button name="action_acknowledge_alert" type="object" string="Acknowledge"/>
+                </header>
+                <field name="alert_level" widget="badge"/>
+                <field name="alert_message"/>
+                <field name="alert_acknowledged"/>
+                <field name="last_seen"/>
+                <field name="minutes_since_seen"/>
+                <field name="user_id"/>
+                <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                <field name="battery_level"/>
+                <field name="battery_status" widget="badge"/>
+                <field name="battery_charging"/>
+                <field name="network_online"/>
+                <field name="network_status" widget="badge"/>
+                <field name="effective_type"/>
+                <field name="downlink_mbps"/>
+                <field name="rtt_ms"/>
+                <field name="save_data"/>
+                <field name="platform" optional="hide"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_device_status_search" model="ir.ui.view">
+        <field name="name">sales.route.device.status.search</field>
+        <field name="model">sales.route.device.status</field>
+        <field name="arch" type="xml">
+            <search string="Field Device Status">
+                <field name="user_id"/>
+                <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                <field name="alert_message"/>
+                <filter string="Critical Alerts" name="critical" domain="[('alert_level','=','2_critical')]"/>
+                <filter string="Warnings" name="warning" domain="[('alert_level','=','1_warning')]"/>
+                <filter string="Unacknowledged" name="unack" domain="[('alert_level','!=','0_ok'),('alert_acknowledged','=',False)]"/>
+                <filter string="Inactive 30+ min" name="stale" domain="[('is_stale','=',True)]"/>
+                <filter string="Offline" name="offline" domain="[('network_online','=',False)]"/>
+                <filter string="Low Battery" name="low_battery" domain="[('battery_status','in',['critical','low'])]"/>
+                <filter string="Poor Network" name="poor_network" domain="[('network_status','in',['offline','poor'])]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Alert Level" name="group_alert" context="{'group_by':'alert_level'}"/>
+                    <filter string="Salesperson" name="group_user" context="{'group_by':'user_id'}"/>
+                    <filter string="Route" name="group_route" context="{'group_by':'route_id'}"/>
+                    <filter string="Battery Status" name="group_battery" context="{'group_by':'battery_status'}"/>
+                    <filter string="Network Status" name="group_network" context="{'group_by':'network_status'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_device_status_form" model="ir.ui.view">
+        <field name="name">sales.route.device.status.form</field>
+        <field name="model">sales.route.device.status</field>
+        <field name="arch" type="xml">
+            <form string="Field Device Status">
+                <header>
+                    <button name="action_refresh_smart_alerts" type="object" string="Refresh Smart Alerts" class="btn-primary"/>
+                    <button name="action_acknowledge_alert" type="object" string="Acknowledge Alert" attrs="{'invisible': [('alert_level','=','0_ok')]}"/>
+                    <button name="action_clear_acknowledgement" type="object" string="Clear Acknowledgement" attrs="{'invisible': [('alert_acknowledged','=',False)]}"/>
+                    <button name="action_open_user_visits" type="object" string="Open User Visits"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="display_name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Smart Alert">
+                            <field name="alert_level" widget="badge" readonly="1"/>
+                            <field name="alert_message" readonly="1"/>
+                            <field name="alert_acknowledged"/>
+                            <field name="last_alert_at" readonly="1"/>
+                            <field name="is_stale" readonly="1"/>
+                            <field name="minutes_since_seen" readonly="1"/>
+                        </group>
+                        <group string="User / Route">
+                            <field name="user_id"/>
+                            <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                            <field name="plan_id"/>
+                            <field name="last_visit_id"/>
+                            <field name="last_seen"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Battery">
+                            <field name="battery_supported"/>
+                            <field name="battery_level"/>
+                            <field name="battery_charging"/>
+                            <field name="battery_status" widget="badge"/>
+                        </group>
+                        <group string="Network / Connectivity">
+                            <field name="network_online"/>
+                            <field name="network_status" widget="badge"/>
+                            <field name="network_type"/>
+                            <field name="effective_type"/>
+                            <field name="downlink_mbps"/>
+                            <field name="rtt_ms"/>
+                            <field name="save_data"/>
+                        </group>
+                    </group>
+                    <group string="Device">
+                        <field name="platform"/>
+                        <field name="page_url"/>
+                        <field name="user_agent"/>
+                        <field name="device_note"/>
+                    </group>
+                    <p class="text-muted">
+                        Exact mobile data consumption is not exposed by most browsers. This module reports connection quality indicators instead: online/offline, effective connection type, downlink, RTT, and data saver status.
+                    </p>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_device_status" model="ir.actions.act_window">
+        <field name="name">Field Device Status</field>
+        <field name="res_model">sales.route.device.status</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="context">{'search_default_unack': 1, 'search_default_group_alert': 1}</field>
+    </record>
+</odoo>

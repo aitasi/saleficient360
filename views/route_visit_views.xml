@@ -1,0 +1,424 @@
+<odoo>
+    <record id="view_route_visit_tree" model="ir.ui.view">
+        <field name="name">sales.route.visit.tree</field>
+        <field name="model">sales.route.visit</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="suspicious_visit" decoration-success="within_allowed_radius">
+                <header>
+                    <button name="action_refresh_order_pos_cache" type="object" string="Refresh POS Summary" class="btn-primary"/>
+                </header>
+                <field name="check_in"/>
+                <field name="check_out"/>
+                <field name="user_id"/>
+                <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                <field name="partner_id"/>
+                <field name="visit_purpose_id"/>
+                <field name="program_line_summary" string="Program Counts" optional="show"/>
+                <field name="delivery_status" optional="show"/>
+                <field name="delivery_source_order_number" string="Source Sales Order" optional="show"/>
+                <field name="delivery_recipient_name" optional="hide"/>
+                                <field name="sale_order_numbers" string="Sales Orders"/>
+                <field name="sale_order_total_amount" sum="Total Sales"/>
+                <field name="pos_settlement_status" string="Settled in POS?" widget="badge" decoration-success="pos_settlement_status == 'settled'" decoration-danger="pos_settlement_status == 'not_settled'"/>
+                <field name="pos_order_receipt_numbers" string="POS Receipt Number"/>
+                <field name="pos_order_total_amount" string="POS Order Amount" sum="Total POS"/>
+                <field name="pos_order_paid_amount" string="POS Paid Amount" sum="Total Paid"/>
+                <field name="pos_order_due_amount" string="POS Amount Due" sum="Total Due"/>
+                <field name="sale_order_product_names" string="Product Category"/>
+                <field name="sale_order_product_qtys" string="Quantity"/>
+                <field name="duration_minutes"/>
+                <field name="distance_from_client_m"/>
+                <field name="within_allowed_radius"/>
+                <field name="suspicious_visit"/>
+                <field name="merchandising_audit_count" optional="show"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="action_route_visit_refresh_pos_summary" model="ir.actions.server">
+        <field name="name">Refresh POS Summary</field>
+        <field name="model_id" ref="model_sales_route_visit"/>
+        <field name="binding_model_id" ref="model_sales_route_visit"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.action_refresh_order_pos_cache()
+else:
+    action = env['sales.route.visit'].refresh_all_route_visit_order_pos_cache()
+        </field>
+    </record>
+
+    
+
+    <record id="view_route_visit_kanban_mobile" model="ir.ui.view">
+        <field name="name">sales.route.visit.kanban.mobile</field>
+        <field name="model">sales.route.visit</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile fsrp-mobile-kanban" default_group_by="state" quick_create="false">
+                <field name="name"/>
+                <field name="check_in"/>
+                <field name="partner_id"/>
+                <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                <field name="user_id"/>
+                <field name="visit_purpose_id"/>
+                <field name="delivery_status" optional="show"/>
+                <field name="delivery_source_order_number"/>
+                <field name="delivery_recipient_name" optional="hide"/>
+                <field name="visit_purpose_category"/>
+                <field name="check_in"/>
+                <field name="check_out"/>
+                <field name="duration_minutes"/>
+                <field name="distance_from_client_m"/>
+                <field name="sale_order_numbers"/>
+                <field name="sale_order_total_amount"/>
+                <field name="pos_settlement_status"/>
+                <field name="pos_order_receipt_numbers"/>
+                <field name="pos_order_total_amount"/>
+                <field name="pos_order_paid_amount"/>
+                <field name="pos_order_due_amount"/>
+                <field name="next_best_action"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_global_click fsrp-mobile-card fsrp-visit-mobile-card fsrp-state-#{record.state.raw_value}">
+                            <div class="fsrp-mobile-card-header">
+                                <div>
+                                    <strong class="fsrp-mobile-title"><field name="partner_id"/></strong>
+                                    <div class="fsrp-mobile-subtitle"><field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/> • <field name="check_in"/></div>
+                                </div>
+                                <span class="fsrp-status-pill"><field name="state"/></span>
+                            </div>
+                            <div class="fsrp-purpose-row">
+                                <span class="fsrp-purpose-pill"><field name="visit_purpose_id"/>
+                <field name="delivery_status" optional="show"/>
+                <field name="delivery_recipient_name" optional="hide"/></span>
+                                <span t-attf-class="fsrp-pos-pill #{record.pos_settlement_status.raw_value == 'settled' ? 'fsrp-pos-settled' : 'fsrp-pos-not-settled'}"><field name="pos_settlement_status"/></span>
+                            </div>
+                            <div class="fsrp-mobile-metrics fsrp-visit-metrics">
+                                <div class="fsrp-checkin"><span>Check In</span><strong><field name="check_in"/></strong></div>
+                                <div class="fsrp-checkout"><span>Check Out</span><strong><field name="check_out"/></strong></div>
+                                <div class="fsrp-duration"><span>Duration</span><strong><field name="duration_minutes"/> min</strong></div>
+                                <div class="fsrp-distance"><span>Distance</span><strong><field name="distance_from_client_m"/> m</strong></div>
+                            </div>
+                            <div class="fsrp-sales-strip">
+                                <div><span>Sales Orders</span><strong><field name="sale_order_numbers"/></strong></div>
+                                <div t-if="record.delivery_source_order_number.raw_value"><span>Source SO</span><strong><field name="delivery_source_order_number"/></strong></div>
+                                <div><span>POS Receipt</span><strong><field name="pos_order_receipt_numbers"/></strong></div>
+                            </div>
+                            <div class="fsrp-mobile-metrics fsrp-money-metrics">
+                                <div><span>POS Total</span><strong><field name="pos_order_total_amount"/></strong></div>
+                                <div><span>Paid</span><strong><field name="pos_order_paid_amount"/></strong></div>
+                                <div><span>Due</span><strong><field name="pos_order_due_amount"/></strong></div>
+                            </div>
+                            <div class="fsrp-next-client-box" t-if="record.next_best_action.raw_value">
+                                <span>Next Best Action</span>
+                                <strong><field name="next_best_action"/></strong>
+                            </div>
+                            <div class="fsrp-mobile-actions">
+                                <button name="action_open_gps_checkin" type="object" class="btn btn-primary btn-sm">Check In</button>
+                                <button name="action_create_sale_order" type="object" class="btn btn-secondary btn-sm">Create Order</button>
+                                <button name="action_navigate_google_maps" type="object" class="btn btn-secondary btn-sm">Navigate</button>
+                                <button name="action_refresh_order_pos_cache" type="object" class="btn btn-link btn-sm">Refresh POS</button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_route_visit_form" model="ir.ui.view">
+        <field name="name">sales.route.visit.form</field>
+        <field name="model">sales.route.visit</field>
+        <field name="arch" type="xml">
+            <form class="fsrp-visit-form">
+                <header>
+                    <button name="action_open_gps_checkin" type="object" string="GPS Check In" states="draft" class="btn-primary"/>
+                    <button name="action_open_gps_checkout" type="object" string="GPS Check Out" states="checked_in" class="btn-primary"/>
+                    <button name="action_navigate_google_maps" type="object" string="Navigate" class="btn-secondary"/>
+                    <button name="action_next_client" type="object" string="Next Client" class="btn-secondary" states="checked_in,checked_out"/>
+                    <button name="action_refresh_order_pos_cache" type="object" string="Refresh POS Summary" class="btn-secondary"/>
+                    <button name="action_load_delivery_lines" type="object" string="Load Delivery Lines" class="btn-secondary" attrs="{'invisible': [('visit_purpose_category', '!=', 'delivery')]}"/>
+                    <button name="action_mark_delivery_done" type="object" string="Confirm Delivery" class="btn-primary" attrs="{'invisible': [('visit_purpose_category', '!=', 'delivery')]}"/>
+                    <button name="action_create_sale_order" type="object" string="Create Sales Order" states="checked_in,checked_out" class="btn-secondary" attrs="{'invisible': [('visit_purpose_category', 'not in', ['sales','van_sales'])]}"/>
+                    <button name="action_quick_reorder_last_purchase" type="object" string="Quick Reorder" states="checked_in,checked_out" class="btn-secondary" attrs="{'invisible': [('visit_purpose_category', 'not in', ['sales','van_sales'])]}"/>
+                    <button name="action_create_smart_reminder" type="object" string="Create Reminder" states="checked_in,checked_out" class="btn-secondary"/>
+                    <button name="action_view_merchandising_audits" type="object" string="Merchandising Audits" class="btn-secondary"/>
+                    <button name="action_set_as_client_location" type="object" string="Set as Client Location" class="btn-secondary" attrs="{'invisible': [('checkin_latitude','=',0)]}"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <field name="visit_purpose" invisible="1"/>
+                    <field name="visit_purpose_category" invisible="1"/>
+                    <!-- Required for attrs on Set as Client Location button; kept hidden because GPS details are summarized above. -->
+                    <field name="checkin_latitude" invisible="1"/>
+                    <div class="oe_title fsrp-visit-title">
+                        <label for="partner_id" class="oe_edit_only"/>
+                        <h1><field name="partner_id" options="{'no_open': False}"/></h1>
+                        <div class="text-muted">
+                            <field name="route_id" readonly="1" options="{'no_create': True, 'no_create_edit': True}"/> • <field name="user_id" readonly="1"/> • <field name="visit_purpose_id" options="{'no_create': False, 'no_create_edit': False}"/>
+                        </div>
+                    </div>
+                    <div class="fsrp-visit-card-row">
+                        <div class="fsrp-visit-card fsrp-card-checkin">
+                            <span class="fsrp-card-label">Check In</span>
+                            <strong><field name="check_in" readonly="1"/></strong>
+                            <small><field name="checkin_place" readonly="1"/></small>
+                        </div>
+                        <div class="fsrp-visit-card fsrp-card-checkout">
+                            <span class="fsrp-card-label">Check Out</span>
+                            <strong><field name="check_out" readonly="1"/></strong>
+                            <small><field name="checkout_place" readonly="1"/></small>
+                        </div>
+                        <div class="fsrp-visit-card fsrp-card-duration">
+                            <span class="fsrp-card-label">Duration</span>
+                            <strong><field name="duration_minutes" readonly="1"/> min</strong>
+                            <small>Visit time</small>
+                        </div>
+                        <div class="fsrp-visit-card fsrp-card-distance">
+                            <span class="fsrp-card-label">Distance</span>
+                            <strong><field name="distance_from_client_m" readonly="1"/> m</strong>
+                            <small><field name="within_allowed_radius" readonly="1"/> Within allowed radius</small>
+                        </div>
+                    </div>
+                    <div class="fsrp-client-intel-row">
+                        <div class="fsrp-intel-card">
+                            <span>Last Purchase</span><strong><field name="client_last_purchase_date" readonly="1"/></strong>
+                        </div>
+                        <div class="fsrp-intel-card">
+                            <span>Total Spend</span><strong><field name="client_total_spend" readonly="1"/></strong>
+                        </div>
+                        <div class="fsrp-intel-card fsrp-intel-warning">
+                            <span>Outstanding</span><strong><field name="client_outstanding_amount" readonly="1"/></strong>
+                        </div>
+                        <div class="fsrp-intel-card fsrp-intel-wide">
+                            <span>Frequent Products</span><strong><field name="client_favorite_products" readonly="1"/></strong>
+                        </div>
+                    </div>
+                    <div class="alert alert-info fsrp-next-action" role="alert">
+                        <strong>Next Best Action: </strong><field name="next_best_action" readonly="1"/>
+                    </div>
+                    <div class="alert alert-success fsrp-smart-recommendations" role="alert">
+                        <strong>Smart Recommendations: </strong><field name="smart_recommendation_text" readonly="1"/>
+                    </div>
+                    <group class="fsrp-compact-main">
+                        <group string="Visit Details">
+                            <field name="plan_id" readonly="1"/>
+                            <field name="plan_line_id" readonly="1"/>
+                            <field name="allowed_radius_m"/>
+                            <field name="suspicious_visit" readonly="1"/>
+                        </group>
+                        <group string="Quick Notes">
+                            <field name="note" nolabel="1" placeholder="General notes for this visit..."/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Sales" attrs="{'invisible': [('visit_purpose_category', 'not in', ['sales','van_sales'])]}">
+                            <group>
+                                <group string="Sales Orders">
+                                    <field name="sale_order_tag_ids" string="Created Sales Orders" widget="many2many_tags" readonly="1" options="{'no_create': True, 'no_create_edit': True, 'no_open': False}"/>
+                                    <field name="sale_order_total_amount" readonly="1"/>
+                                    <field name="pos_settlement_status" readonly="1"/>
+                                    <field name="pos_order_receipt_numbers" readonly="1"/>
+                                    <field name="pos_order_total_amount" readonly="1"/>
+                                    <field name="pos_order_paid_amount" readonly="1"/>
+                                    <field name="pos_order_due_amount" readonly="1"/>
+                                </group>
+                                <group string="Sales Follow-up">
+                                    <field name="followup_activity_type_id"/>
+                                    <field name="followup_date_deadline"/>
+                                    <field name="followup_summary"/>
+                                    <field name="followup_note"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Marketing" attrs="{'invisible': [('visit_purpose_category', '!=', 'marketing')]}">
+                            <group>
+                                <group string="Programmes / Catalogues">
+                                    <field name="program_count" readonly="1"/>
+                                    <field name="program_line_ids" nolabel="1">
+                                        <tree editable="bottom">
+                                            <field name="program_id"/>
+                                            <field name="response"/>
+                                            <field name="count" readonly="1"/>
+                                            <field name="note"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                                <group string="Contact Captured">
+                                    <field name="contact_person_name"/>
+                                    <field name="contact_person_phone"/>
+                                    <field name="contact_person_email"/>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="marketing_activities_done" placeholder="Activities done at the client place..."/>
+                                <field name="marketing_notes" placeholder="Customer feedback, competitor info, relationship notes, next steps..."/>
+                            </group>
+                        </page>
+                        <page string="Delivery" attrs="{'invisible': [('visit_purpose_category', '!=', 'delivery')]}">
+                            <div class="fsrp-delivery-workspace">
+                                <div class="alert alert-info" role="alert">
+                                    <strong>Delivery Fulfilment:</strong> select the earlier Sales Order, load remaining quantities, enter what is delivered now, then confirm with GPS proof.
+                                </div>
+                                <group class="fsrp-delivery-header">
+                                    <group string="Source &amp; Status">
+                                        <field name="delivery_status" widget="radio"/>
+                                        <field name="delivery_source_sale_order_id" options="{'no_create': True, 'no_open': False}" domain="[('partner_id', '=', partner_id), ('state', 'not in', ['cancel'])]"/>
+                                        <field name="delivery_source_order_number" readonly="1"/>
+                                        <field name="delivery_reference" placeholder="Optional dispatch / delivery reference"/>
+                                    </group>
+                                    <group string="Delivery Control Totals">
+                                        <button name="action_load_delivery_lines" type="object" string="Load Order Quantities" class="btn-secondary"/>
+                                        <button name="action_mark_delivery_done" type="object" string="Confirm Delivery" class="btn-primary" attrs="{'invisible': [('state', '=', 'draft')]}"/>
+                                        <button name="action_mark_delivery_failed" type="object" string="Mark Failed" class="btn-secondary"/>
+                                        <field name="delivery_sequence" readonly="1"/>
+                                        <field name="delivery_done_count" readonly="1"/>
+                                        <field name="delivery_completion_percent" readonly="1" widget="progressbar"/>
+                                    </group>
+                                </group>
+                                <div class="fsrp-delivery-kpi-row">
+                                    <div class="fsrp-delivery-kpi"><span>Source Ordered</span><strong><field name="delivery_total_ordered_qty" readonly="1"/></strong></div>
+                                    <div class="fsrp-delivery-kpi"><span>Already Delivered</span><strong><field name="delivery_total_already_delivered_qty" readonly="1"/></strong></div>
+                                    <div class="fsrp-delivery-kpi"><span>Remaining Before</span><strong><field name="delivery_total_remaining_qty" readonly="1"/></strong></div>
+                                    <div class="fsrp-delivery-kpi fsrp-delivery-kpi-primary"><span>Deliver Now</span><strong><field name="delivery_total_deliver_now_qty" readonly="1"/></strong></div>
+                                </div>
+                                <group string="Delivery Lines" class="fsrp-delivery-lines">
+                                    <field name="delivery_line_ids" nolabel="1" context="{'default_visit_id': active_id}">
+                                        <tree editable="bottom" create="0" delete="0" decoration-danger="line_status == 'over'" decoration-success="line_status == 'done'" decoration-warning="line_status == 'partial'">
+                                            <field name="sequence" widget="handle"/>
+                                            <field name="sale_order_line_id" readonly="1" optional="hide"/>
+                                            <field name="product_id" readonly="1"/>
+                                            <field name="product_uom_id" readonly="1"/>
+                                            <field name="ordered_qty" readonly="1" sum="Ordered"/>
+                                            <field name="already_delivered_qty" readonly="1" sum="Already Delivered"/>
+                                            <field name="remaining_qty" readonly="1" sum="Remaining"/>
+                                            <field name="deliver_now_qty" sum="Deliver Now"/>
+                                            <field name="balance_after_delivery" readonly="1" sum="Balance"/>
+                                            <field name="line_status" readonly="1"/>
+                                            <field name="note"/>
+                                        </tree>
+                                    </field>
+                                </group>
+                                <group>
+                                    <group string="Recipient Details">
+                                        <field name="delivery_recipient_name" placeholder="Name of person receiving goods"/>
+                                        <field name="delivery_recipient_phone" placeholder="Phone number"/>
+                                    </group>
+                                    <group string="Proof of Delivery">
+                                        <field name="delivery_proof_photo" filename="delivery_proof_photo_filename" widget="image"/>
+                                        <field name="delivery_proof_photo_filename" invisible="1"/>
+                                        <field name="delivery_signature" filename="delivery_signature_filename" widget="image" options="{'size': [0, 160]}"/>
+                                        <field name="delivery_signature_filename" invisible="1"/>
+                                    </group>
+                                </group>
+                                <group string="Delivery Notes">
+                                    <field name="delivery_notes" nolabel="1" placeholder="Shortages, damages, failed delivery reason, recipient comments..."/>
+                                </group>
+                            </div>
+                        </page>
+
+                        <page string="Client Timeline">
+                            <group>
+                                <field name="client_visit_history_timeline" nolabel="1" readonly="1"/>
+                            </group>
+                        </page>
+                        <page string="Merchandising Audit">
+                            <field name="merchandising_audit_ids" context="{'default_visit_id': active_id}">
+                                <tree editable="bottom">
+                                    <field name="audit_date"/>
+                                    <field name="shelf_available"/>
+                                    <field name="display_quality"/>
+                                    <field name="competitor_visible"/>
+                                    <field name="competitor_brand"/>
+                                    <field name="score"/>
+                                    <field name="notes"/>
+                                </tree>
+                                <form>
+                                    <group>
+                                        <field name="visit_id"/>
+                                        <field name="audit_date"/>
+                                        <field name="shelf_available"/>
+                                        <field name="display_quality"/>
+                                        <field name="competitor_visible"/>
+                                        <field name="competitor_brand"/>
+                                        <field name="score"/>
+                                    </group>
+                                    <group>
+                                        <field name="before_photo" filename="before_photo_filename" widget="image"/>
+                                        <field name="before_photo_filename" invisible="1"/>
+                                        <field name="after_photo" filename="after_photo_filename" widget="image"/>
+                                        <field name="after_photo_filename" invisible="1"/>
+                                        <field name="competitor_photo" filename="competitor_photo_filename" widget="image"/>
+                                        <field name="competitor_photo_filename" invisible="1"/>
+                                    </group>
+                                    <field name="notes"/>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Smart Reminders">
+                            <field name="smart_reminder_ids" context="{'default_visit_id': active_id, 'default_partner_id': partner_id, 'default_route_id': route_id, 'default_user_id': user_id}">
+                                <tree editable="bottom">
+                                    <field name="due_date"/>
+                                    <field name="name"/>
+                                    <field name="reminder_type"/>
+                                    <field name="priority"/>
+                                    <field name="state"/>
+                                    <field name="note"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Previous Marketing History">
+                            <field name="marketing_history_ids" readonly="1">
+                                <tree>
+                                    <field name="visit_date"/>
+                                    <field name="user_id"/>
+                                    <field name="program_issued"/>
+                                    <field name="program_count"/>
+                                    <field name="program_ids" widget="many2many_tags"/>
+                                    <field name="contact_person_name"/>
+                                    <field name="contact_person_phone"/>
+                                    <field name="activity_summary"/>
+                                    <field name="activity_date_deadline"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Photos">
+                            <group>
+                                <group string="Client / Shop">
+                                    <field name="shop_photo" filename="shop_photo_filename" widget="image"/>
+                                    <field name="shop_photo_filename" invisible="1"/>
+                                    <field name="shelf_photo" filename="shelf_photo_filename" widget="image"/>
+                                    <field name="shelf_photo_filename" invisible="1"/>
+                                </group>
+                                <group string="Competition / Proof">
+                                    <field name="competitor_photo" filename="competitor_photo_filename" widget="image"/>
+                                    <field name="competitor_photo_filename" invisible="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter"><field name="message_follower_ids"/><field name="activity_ids"/><field name="message_ids"/></div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_route_visit_pivot" model="ir.ui.view">
+        <field name="name">sales.route.visit.pivot</field>
+        <field name="model">sales.route.visit</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="route_id" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="partner_id" type="row"/>
+                <field name="check_in" type="col" interval="month"/>
+                <field name="duration_minutes" type="measure"/>
+                <field name="distance_from_client_m" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+</odoo>

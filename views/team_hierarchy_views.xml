@@ -1,0 +1,60 @@
+<odoo>
+    <record id="view_sales_route_team_hierarchy_tree" model="ir.ui.view">
+        <field name="name">sales.route.team.hierarchy.tree</field>
+        <field name="model">sales.route.team.hierarchy</field>
+        <field name="arch" type="xml">
+            <tree string="Field Sales Team Hierarchy" editable="bottom">
+                <field name="manager_id"/>
+                <field name="supervisor_id"/>
+                <field name="salesperson_id"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_sales_route_team_hierarchy_form" model="ir.ui.view">
+        <field name="name">sales.route.team.hierarchy.form</field>
+        <field name="model">sales.route.team.hierarchy</field>
+        <field name="arch" type="xml">
+            <form string="Field Sales Team Hierarchy">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Sales Manager → Supervisor → Sales Person</h1>
+                        <p class="text-muted">Create one line per sales person. Use the same Sales Manager on many lines to assign many supervisors, and use the same Supervisor on many lines to assign many sales persons.</p>
+                    </div>
+                    <group>
+                        <field name="manager_id"/>
+                        <field name="supervisor_id"/>
+                        <field name="salesperson_id"/>
+                        <field name="active"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sales_route_team_hierarchy_search" model="ir.ui.view">
+        <field name="name">sales.route.team.hierarchy.search</field>
+        <field name="model">sales.route.team.hierarchy</field>
+        <field name="arch" type="xml">
+            <search string="Team Hierarchy">
+                <field name="manager_id"/>
+                <field name="supervisor_id"/>
+                <field name="salesperson_id"/>
+                <filter name="active" string="Active" domain="[('active','=',True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_manager" string="Sales Manager" context="{'group_by':'manager_id'}"/>
+                    <filter name="group_supervisor" string="Supervisor" context="{'group_by':'supervisor_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_sales_route_team_hierarchy" model="ir.actions.act_window">
+        <field name="name">Team Hierarchy</field>
+        <field name="res_model">sales.route.team.hierarchy</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_sales_route_team_hierarchy_search"/>
+        <field name="context">{'search_default_active': 1, 'search_default_group_manager': 1, 'search_default_group_supervisor': 1}</field>
+    </record>
+</odoo>

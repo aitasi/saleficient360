@@ -1,0 +1,97 @@
+<odoo>
+    <menuitem id="menu_field_sales_root" name="Field Sales" sequence="35" groups="field_sales_route_plan.group_field_sales_user,field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager,field_sales_route_plan.group_stock_van_loading_manager"/>
+    <menuitem id="menu_field_sales_planning" name="Planning" parent="menu_field_sales_root" sequence="10" groups="field_sales_route_plan.group_field_sales_user,field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_field_sales_reports" name="Reports" parent="menu_field_sales_root" sequence="50" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_quick_route_plan_wizard" name="Quick Route Plan" parent="menu_field_sales_planning" action="action_quick_route_plan_wizard" sequence="5"/>
+    <menuitem id="menu_field_sales_config" name="Configuration" parent="menu_field_sales_root" sequence="90" groups="field_sales_route_plan.group_field_sales_manager"/>
+
+
+    <record id="action_simple_field_mode" model="ir.actions.client">
+        <field name="name">My Field Work</field>
+        <field name="tag">field_sales_route_plan.simple_mode</field>
+    </record>
+    <menuitem id="menu_simple_field_mode" name="My Field Work" parent="menu_field_sales_root" action="action_simple_field_mode" sequence="5"/>
+
+    <record id="action_manager_control_panel" model="ir.actions.client">
+        <field name="name">Manager Control Panel</field>
+        <field name="tag">field_sales_route_plan.manager_panel</field>
+    </record>
+    <menuitem id="menu_manager_control_panel" name="Manager Control Panel" parent="menu_field_sales_reports" action="action_manager_control_panel" sequence="5" groups="field_sales_route_plan.group_field_sales_manager"/>
+    <record id="action_supervisor_control_panel" model="ir.actions.client">
+        <field name="name">Supervisor Control Panel</field>
+        <field name="tag">field_sales_route_plan.manager_panel</field>
+    </record>
+    <menuitem id="menu_supervisor_control_panel" name="Supervisor Control Panel" parent="menu_field_sales_reports" action="action_supervisor_control_panel" sequence="6" groups="field_sales_route_plan.group_field_sales_supervisor"/>
+<record id="action_sales_route" model="ir.actions.act_window">
+        <field name="name">Market Routes</field>
+        <field name="res_model">sales.route</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem id="menu_sales_route" name="Market Routes" parent="menu_field_sales_config" action="action_sales_route" sequence="10"/>
+
+    <record id="action_route_plan" model="ir.actions.act_window">
+        <field name="name">Daily Route Plans</field>
+        <field name="res_model">sales.route.plan</field>
+        <field name="view_mode">kanban,tree,form,pivot,graph</field>
+    </record>
+
+    <menuitem id="menu_route_plan" name="Daily Route Plans" parent="menu_field_sales_planning" action="action_route_plan" sequence="10"/>
+
+
+    <menuitem id="menu_sales_route_facilitation_form" name="Daily Facilitation Forms" parent="menu_field_sales_planning" action="action_sales_route_facilitation_form" sequence="12" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+
+    <record id="action_route_visit" model="ir.actions.act_window">
+        <field name="name">Route Visits</field>
+        <field name="res_model">sales.route.visit</field>
+        <field name="view_mode">kanban,tree,form,pivot,graph</field>
+    </record>
+    <menuitem id="menu_route_visit" name="Route Visits" parent="menu_field_sales_planning" action="action_route_visit" sequence="20"/>
+
+
+    <record id="action_client_map" model="ir.actions.client">
+        <field name="name">Client Map</field>
+        <field name="tag">field_sales_route_plan.client_map</field>
+    </record>
+    <menuitem id="menu_client_map" name="Client Map / Heat Map" parent="menu_field_sales_planning" action="action_client_map" sequence="30" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_route_manager_dashboard" name="Manager Dashboard" parent="menu_field_sales_reports" action="action_route_manager_dashboard" sequence="10" groups="field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_sales_route_target_report" name="Invoice / POS Targets" parent="menu_field_sales_reports" action="action_sales_route_target" sequence="12" groups="field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_device_status" name="Field Device Status" parent="menu_field_sales_reports" action="action_device_status" sequence="14" groups="field_sales_route_plan.group_field_sales_manager"/>
+
+    <menuitem id="menu_field_sales_team_hierarchy" name="Team Hierarchy" parent="menu_field_sales_config" action="action_sales_route_team_hierarchy" sequence="2" groups="field_sales_route_plan.group_field_sales_manager,base.group_system"/>
+    <menuitem id="menu_sales_route_license" name="License Management" parent="menu_field_sales_config" action="action_sales_route_license" sequence="1" groups="field_sales_route_plan.group_field_sales_manager,base.group_system"/>
+    <menuitem id="menu_marketing_program" name="Programs / Catalogues" parent="menu_field_sales_planning" action="action_marketing_program" sequence="24" groups="field_sales_route_plan.group_field_sales_user,field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_sales_route_target_config" name="Invoice / POS Order Targets" parent="menu_field_sales_config" action="action_sales_route_target" sequence="18"/>
+    <menuitem id="menu_visit_purposes" name="Visit Purposes" parent="menu_field_sales_config" action="action_sales_route_visit_purpose" sequence="16" groups="field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_marketing_history" name="Marketing History" parent="menu_field_sales_reports" action="action_marketing_history" sequence="20" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+
+    <menuitem id="menu_ai_chat_assistant" name="AI Chat Assistant" parent="menu_field_sales_planning" action="action_sales_route_ai_chat" sequence="26" groups="field_sales_route_plan.group_field_sales_manager"/>
+
+    <menuitem id="menu_call_reasons" name="Unproductive Call Reasons" parent="menu_field_sales_config" action="action_sales_route_call_reason" sequence="20" groups="field_sales_route_plan.group_field_sales_manager"/>
+
+
+    <menuitem id="menu_sales_route_attendance" name="Field Staff Attendance" parent="menu_field_sales_reports" action="action_route_attendance" sequence="16" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_smart_reminder" name="Smart Reminders" parent="menu_field_sales_planning" action="action_smart_reminder" sequence="28" groups="field_sales_route_plan.group_field_sales_user,field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_merchandising_audit" name="Merchandising Audits" parent="menu_field_sales_planning" action="action_merchandising_audit" sequence="29" groups="field_sales_route_plan.group_field_sales_user,field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_game_score" name="Sales Gamification" parent="menu_field_sales_reports" action="action_game_score" sequence="24" groups="field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_sku_target_performance" name="SKU Target Performance" parent="menu_field_sales_reports" action="action_sku_target_performance" sequence="28" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+
+
+
+    <record id="action_executive_dashboard" model="ir.actions.act_window">
+        <field name="name">Executive Dashboard</field>
+        <field name="res_model">sales.route.dashboard.report</field>
+        <field name="view_mode">graph,pivot,tree</field>
+        <field name="context">{'group_by': ['route_id'], 'search_default_this_month': 1}</field>
+    </record>
+    <menuitem id="menu_executive_dashboard" name="Executive Dashboard" parent="menu_field_sales_reports" action="action_executive_dashboard" sequence="3" groups="field_sales_route_plan.group_field_sales_manager"/>
+
+    <record id="action_delivery_app_mode" model="ir.actions.act_window">
+        <field name="name">Delivery App Mode</field>
+        <field name="res_model">sales.route.visit</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('visit_purpose_category','=','delivery')]</field>
+        <field name="context">{'search_default_today': 1}</field>
+    </record>
+    <menuitem id="menu_delivery_app_mode" name="Delivery App Mode" parent="menu_field_sales_planning" action="action_delivery_app_mode" sequence="6" groups="field_sales_route_plan.group_field_sales_user,field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+
+</odoo>

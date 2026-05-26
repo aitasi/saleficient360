@@ -1,0 +1,65 @@
+<odoo>
+    <record id="view_merchandising_audit_tree" model="ir.ui.view">
+        <field name="name">sales.route.merchandising.audit.tree</field>
+        <field name="model">sales.route.merchandising.audit</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="audit_date"/>
+                <field name="partner_id"/>
+                <field name="route_id"/>
+                <field name="user_id"/>
+                <field name="shelf_available"/>
+                <field name="display_quality"/>
+                <field name="competitor_visible"/>
+                <field name="competitor_brand"/>
+                <field name="score"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_merchandising_audit_form" model="ir.ui.view">
+        <field name="name">sales.route.merchandising.audit.form</field>
+        <field name="model">sales.route.merchandising.audit</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name" readonly="1"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="visit_id"/>
+                            <field name="audit_date"/>
+                            <field name="partner_id" readonly="1"/>
+                            <field name="route_id" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="shelf_available"/>
+                            <field name="display_quality"/>
+                            <field name="competitor_visible"/>
+                            <field name="competitor_brand"/>
+                            <field name="score"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Photos">
+                            <group>
+                                <field name="before_photo" filename="before_photo_filename" widget="image"/>
+                                <field name="before_photo_filename" invisible="1"/>
+                                <field name="after_photo" filename="after_photo_filename" widget="image"/>
+                                <field name="after_photo_filename" invisible="1"/>
+                                <field name="competitor_photo" filename="competitor_photo_filename" widget="image"/>
+                                <field name="competitor_photo_filename" invisible="1"/>
+                            </group>
+                        </page>
+                        <page string="Notes"><field name="notes" nolabel="1"/></page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter"><field name="message_follower_ids"/><field name="activity_ids"/><field name="message_ids"/></div>
+            </form>
+        </field>
+    </record>
+    <record id="action_merchandising_audit" model="ir.actions.act_window">
+        <field name="name">Merchandising Audits</field>
+        <field name="res_model">sales.route.merchandising.audit</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+    </record>
+</odoo>

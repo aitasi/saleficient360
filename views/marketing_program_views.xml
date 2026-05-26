@@ -1,0 +1,235 @@
+<odoo>
+    <record id="view_marketing_program_tree" model="ir.ui.view">
+        <field name="name">sales.route.marketing.program.tree</field>
+        <field name="model">sales.route.marketing.program</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="product_ids" widget="many2many_tags"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_marketing_program_form" model="ir.ui.view">
+        <field name="name">sales.route.marketing.program.form</field>
+        <field name="model">sales.route.marketing.program</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="code"/>
+                        <field name="active"/>
+                        <field name="product_ids" widget="many2many_tags"/>
+                        <field name="attachment_ids" widget="many2many_binary"/>
+                    </group>
+                    <group><field name="description"/></group>
+                </sheet>
+                <div class="oe_chatter"><field name="message_follower_ids"/><field name="activity_ids"/><field name="message_ids"/></div>
+            </form>
+        </field>
+    </record>
+    <record id="action_marketing_program" model="ir.actions.act_window">
+        <field name="name">Programs / Catalogues</field>
+        <field name="res_model">sales.route.marketing.program</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <record id="view_marketing_history_tree" model="ir.ui.view">
+        <field name="name">sales.route.marketing.history.tree</field>
+        <field name="model">sales.route.marketing.history</field>
+        <field name="arch" type="xml">
+            <tree string="Client Communication Intelligence" decoration-danger="route_age_bucket == '30_days'" decoration-warning="route_age_bucket in ('14_days','never_bought')" decoration-success="route_age_bucket in ('today','7_days')">
+                <field name="visit_date"/>
+                <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                <field name="partner_id"/>
+                <field name="customer_classification"/>
+                <field name="user_id"/>
+                <field name="visit_purpose_id"/>
+                <field name="activity_summary"/>
+                <field name="activity_date_deadline"/>
+                <field name="route_age_bucket"/>
+                <field name="last_purchase_date"/>
+                <field name="days_since_last_purchase"/>
+                <field name="program_issued"/>
+                <field name="program_ids" widget="many2many_tags"/>
+                <field name="contact_person_name"/>
+                <field name="contact_person_phone"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_marketing_history_form" model="ir.ui.view">
+        <field name="name">sales.route.marketing.history.form</field>
+        <field name="model">sales.route.marketing.history</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group string="Client / Route">
+                            <field name="name"/>
+                            <field name="partner_id"/>
+                            <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                            <field name="user_id"/>
+                            <field name="visit_id"/>
+                            <field name="visit_date"/>
+                            <field name="visit_purpose_id"/>
+                        </group>
+                        <group string="Client Sales Aging">
+                            <field name="customer_classification"/>
+                            <field name="route_age_bucket"/>
+                            <field name="last_purchase_date"/>
+                            <field name="days_since_last_purchase"/>
+                            <field name="route_sales_potential"/>
+                        </group>
+                    </group>
+                    <group string="Communication / Follow-up">
+                        <field name="activity_summary"/>
+                        <field name="activity_date_deadline"/>
+                        <field name="notes" placeholder="What did the client communicate? What was discussed? What follow-up is needed?"/>
+                    </group>
+                    <group string="Programs / Catalogues">
+                        <field name="program_issued"/>
+                        <field name="program_count"/>
+                        <field name="program_custom_count"/>
+                        <field name="program_ids" widget="many2many_tags"/>
+                    </group>
+                    <group string="Contact Person">
+                        <field name="contact_person_name"/>
+                        <field name="contact_person_phone"/>
+                        <field name="contact_person_email"/>
+                        <field name="client_phone"/>
+                        <field name="client_mobile"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter"><field name="message_follower_ids"/><field name="activity_ids"/><field name="message_ids"/></div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_marketing_history_search" model="ir.ui.view">
+        <field name="name">sales.route.marketing.history.search</field>
+        <field name="model">sales.route.marketing.history</field>
+        <field name="arch" type="xml">
+            <search string="Search Marketing History">
+                <field name="partner_id"/>
+                <field name="route_id"/>
+                <field name="user_id"/>
+                <field name="visit_purpose_id"/>
+                <field name="activity_summary"/>
+                <field name="notes"/>
+                <filter name="today" string="Today" domain="[('visit_date','&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')), ('visit_date','&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                <filter name="followups" string="Follow-ups" domain="[('activity_summary','!=',False)]"/>
+                <separator/>
+                <filter name="group_route" string="Group by Route" context="{'group_by':'route_id'}"/>
+                <filter name="group_day" string="Group by Day" context="{'group_by':'visit_date:day'}"/>
+                <filter name="group_salesperson" string="Group by Salesperson" context="{'group_by':'user_id'}"/>
+                <filter name="group_client" string="Group by Client" context="{'group_by':'partner_id'}"/>
+                <filter name="group_purpose" string="Group by Purpose" context="{'group_by':'visit_purpose_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_marketing_history_pivot" model="ir.ui.view">
+        <field name="name">sales.route.marketing.history.pivot</field>
+        <field name="model">sales.route.marketing.history</field>
+        <field name="arch" type="xml">
+            <pivot string="Marketing History Analysis">
+                <field name="route_id" type="row"/>
+                <field name="user_id" type="row"/>
+                <field name="visit_date" interval="day" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_marketing_history_calendar" model="ir.ui.view">
+        <field name="name">sales.route.marketing.history.calendar</field>
+        <field name="model">sales.route.marketing.history</field>
+        <field name="arch" type="xml">
+            <calendar string="Daily Marketing History" date_start="visit_date" color="route_id">
+                <field name="partner_id"/>
+                <field name="route_id"/>
+                <field name="user_id"/>
+                <field name="activity_summary"/>
+            </calendar>
+        </field>
+    </record>
+
+
+    <record id="view_route_visit_communication_tree" model="ir.ui.view">
+        <field name="name">sales.route.visit.communication.tree</field>
+        <field name="model">sales.route.visit</field>
+        <field name="arch" type="xml">
+            <tree string="Client Communication History" create="false" edit="false" decoration-success="pos_settlement_status == 'settled'" decoration-warning="pos_order_due_amount &gt; 0">
+                <field name="check_in" string="Visit Time"/>
+                <field name="route_id" string="Route"/>
+                <field name="partner_id" string="Client"/>
+                <field name="user_id" string="Salesperson"/>
+                <field name="visit_purpose_id" string="Purpose"/>
+                <field name="state"/>
+                <field name="pos_settlement_status" string="Settlement"/>
+                <field name="pos_order_total_amount" string="POS Order" sum="POS Order"/>
+                <field name="pos_order_paid_amount" string="POS Paid" sum="POS Paid"/>
+                <field name="pos_order_due_amount" string="Amount Due" sum="Amount Due"/>
+                <field name="client_sales_aging_bucket" string="Sales Aging"/>
+                <field name="client_last_purchase_date" string="Last Purchase"/>
+                <field name="client_days_since_last_purchase" string="Days Since Purchase"/>
+                <field name="client_followup_summary" string="Follow-up"/>
+                <field name="client_communication_summary" string="Communication / Activity"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_route_visit_communication_search" model="ir.ui.view">
+        <field name="name">sales.route.visit.communication.search</field>
+        <field name="model">sales.route.visit</field>
+        <field name="arch" type="xml">
+            <search string="Search Client Communications">
+                <field name="partner_id"/>
+                <field name="route_id"/>
+                <field name="user_id"/>
+                <field name="visit_purpose_id"/>
+                <field name="marketing_notes"/>
+                <field name="marketing_activities_done"/>
+                <field name="note"/>
+                <filter name="today" string="Today" domain="[('check_in','&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')), ('check_in','&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                <filter name="has_notes" string="Has Notes" domain="['|','|',('marketing_notes','!=',False),('marketing_activities_done','!=',False),('note','!=',False)]"/>
+                <filter name="settled" string="Settled" domain="[('pos_settlement_status','=','settled')]"/>
+                <filter name="amount_due" string="Amount Due" domain="[('pos_order_due_amount','&gt;',0)]"/>
+                <separator/>
+                <filter name="group_route" string="Group by Route" context="{'group_by':'route_id'}"/>
+                <filter name="group_day" string="Group by Day" context="{'group_by':'check_in:day'}"/>
+                <filter name="group_salesperson" string="Group by Salesperson" context="{'group_by':'user_id'}"/>
+                <filter name="group_client" string="Group by Client" context="{'group_by':'partner_id'}"/>
+                <filter name="group_purpose" string="Group by Purpose" context="{'group_by':'visit_purpose_id'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_route_visit_communication_calendar" model="ir.ui.view">
+        <field name="name">sales.route.visit.communication.calendar</field>
+        <field name="model">sales.route.visit</field>
+        <field name="arch" type="xml">
+            <calendar string="Client Communication Calendar" date_start="check_in" color="route_id">
+                <field name="partner_id"/>
+                <field name="route_id"/>
+                <field name="user_id"/>
+                <field name="visit_purpose_id"/>
+                <field name="pos_order_total_amount"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="action_marketing_history" model="ir.actions.act_window">
+        <field name="name">Client Communication Intelligence</field>
+        <field name="res_model">sales.route.visit</field>
+        <field name="view_mode">tree,form,calendar</field>
+        <field name="views" eval="[(ref('view_route_visit_communication_tree'), 'tree'), (False, 'form'), (ref('view_route_visit_communication_calendar'), 'calendar')]"/>
+        <field name="search_view_id" ref="view_route_visit_communication_search"/>
+        <field name="context">{'search_default_today': 1, 'search_default_group_route': 1, 'search_default_group_day': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No route visit activity found for the selected filters.</p>
+            <p>This manager workspace is populated from actual route visits first. Notes, follow-ups, activities, settlement status, POS order value, POS paid amount, amount due and client sales aging are shown when available.</p>
+        </field>
+    </record>
+</odoo>

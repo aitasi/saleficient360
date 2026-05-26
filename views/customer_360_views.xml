@@ -1,0 +1,156 @@
+<odoo>
+    <record id="view_field_sales_customer_360_tree" model="ir.ui.view">
+        <field name="name">field.sales.customer.360.tree</field>
+        <field name="model">field.sales.customer.360</field>
+        <field name="arch" type="xml">
+            <tree string="Customer 360 Intelligence" create="0" edit="0" delete="0">
+                <field name="partner_id"/>
+                <field name="route_id"/>
+                <field name="salesperson_id"/>
+                <field name="last_visit_date"/>
+                <field name="today_sales"/>
+                <field name="mtd_sales"/>
+                <field name="ytd_sales"/>
+                <field name="pos_collections_ytd"/>
+                <field name="amount_due_ytd"/>
+                <field name="visit_count_30"/>
+                <field name="productive_count_30"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_field_sales_customer_360_form" model="ir.ui.view">
+        <field name="name">field.sales.customer.360.form</field>
+        <field name="model">field.sales.customer.360</field>
+        <field name="arch" type="xml">
+            <form string="Customer 360 Intelligence" create="0" edit="0" delete="0">
+                <sheet>
+                    <div class="oe_title"><h1><field name="partner_id"/></h1></div>
+                    <group>
+                        <group string="Route Assignment">
+                            <field name="route_id"/>
+                            <field name="salesperson_id"/>
+                            <field name="customer_classification"/>
+                            <field name="route_sales_potential"/>
+                        </group>
+                        <group string="Commercial Performance">
+                            <field name="today_sales"/>
+                            <field name="mtd_sales"/>
+                            <field name="ytd_sales"/>
+                            <field name="avg_basket"/>
+                            <field name="sale_order_count_ytd"/>
+                        </group>
+                        <group string="Collections / Aging">
+                            <field name="pos_collections_ytd"/>
+                            <field name="amount_due_ytd"/>
+                        </group>
+                        <group string="Visit Coverage">
+                            <field name="last_visit_date"/>
+                            <field name="last_productive_date"/>
+                            <field name="visit_count_30"/>
+                            <field name="productive_count_30"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="AI Insight"><field name="ai_insight" nolabel="1"/></page>
+                        <page string="Opportunity"><field name="opportunity_note" nolabel="1"/></page>
+                        <page string="Latest Communication"><field name="communication_summary" nolabel="1"/></page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_field_sales_customer_360_search" model="ir.ui.view">
+        <field name="name">field.sales.customer.360.search</field>
+        <field name="model">field.sales.customer.360</field>
+        <field name="arch" type="xml">
+            <search string="Customer Intelligence">
+                <field name="partner_id"/>
+                <field name="route_id"/>
+                <field name="salesperson_id"/>
+                <filter string="No MTD Sales" name="no_mtd" domain="[('mtd_sales','=',0)]"/>
+                <filter string="Has Amount Due" name="has_due" domain="[('amount_due_ytd','&gt;',0)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Route" name="grp_route" context="{'group_by':'route_id'}"/>
+                    <filter string="Salesperson" name="grp_salesperson" context="{'group_by':'salesperson_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_field_sales_customer_360" model="ir.actions.act_window">
+        <field name="name">Customer 360 Intelligence</field>
+        <field name="res_model">field.sales.customer.360</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_field_sales_customer_360_search"/>
+    </record>
+
+    <record id="view_field_sales_ai_opportunity_tree" model="ir.ui.view">
+        <field name="name">field.sales.ai.opportunity.tree</field>
+        <field name="model">field.sales.ai.opportunity</field>
+        <field name="arch" type="xml">
+            <tree string="AI Opportunities" create="0" edit="0" delete="0" decoration-danger="opportunity_score &gt;= 90" decoration-warning="opportunity_score &gt;= 75 and opportunity_score &lt; 90">
+                <field name="partner_id"/>
+                <field name="route_id"/>
+                <field name="salesperson_id"/>
+                <field name="opportunity_type"/>
+                <field name="opportunity_score"/>
+                <field name="estimated_value"/>
+                <field name="recommendation"/>
+            </tree>
+        </field>
+    </record>
+    <record id="action_field_sales_ai_opportunity" model="ir.actions.act_window">
+        <field name="name">AI Opportunity Engine</field>
+        <field name="res_model">field.sales.ai.opportunity</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <record id="view_field_sales_offline_queue_tree" model="ir.ui.view">
+        <field name="name">field.sales.offline.queue.tree</field>
+        <field name="model">field.sales.offline.queue</field>
+        <field name="arch" type="xml">
+            <tree string="Offline Sync Queue">
+                <field name="create_date"/>
+                <field name="user_id"/>
+                <field name="model_name"/>
+                <field name="operation"/>
+                <field name="state"/>
+                <field name="error_message"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_field_sales_offline_queue_form" model="ir.ui.view">
+        <field name="name">field.sales.offline.queue.form</field>
+        <field name="model">field.sales.offline.queue</field>
+        <field name="arch" type="xml">
+            <form string="Offline Sync Item">
+                <header>
+                    <button name="action_mark_synced" type="object" string="Mark Synced" class="btn-primary"/>
+                    <button name="action_mark_failed" type="object" string="Mark Failed"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="user_id"/>
+                        <field name="model_name"/>
+                        <field name="operation"/>
+                        <field name="synced_on"/>
+                    </group>
+                    <group>
+                        <field name="payload"/>
+                        <field name="error_message"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="action_field_sales_offline_queue" model="ir.actions.act_window">
+        <field name="name">Offline Sync Monitor</field>
+        <field name="res_model">field.sales.offline.queue</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_field_sales_customer_360" name="Customer 360 Intelligence" parent="menu_field_sales_reports" action="action_field_sales_customer_360" sequence="21" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_field_sales_ai_opportunity" name="AI Opportunity Engine" parent="menu_field_sales_reports" action="action_field_sales_ai_opportunity" sequence="22" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_field_sales_offline_queue" name="Offline Sync Monitor" parent="menu_field_sales_reports" action="action_field_sales_offline_queue" sequence="23" groups="field_sales_route_plan.group_field_sales_manager"/>
+</odoo>

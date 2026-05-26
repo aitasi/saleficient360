@@ -1,0 +1,535 @@
+<odoo>
+    <record id="view_sales_person_profile_tree" model="ir.ui.view">
+        <field name="name">sales.person.profile.tree</field>
+        <field name="model">sales.person.profile</field>
+        <field name="arch" type="xml">
+            <tree string="Sales Person Profiles" create="0" edit="0" delete="0" decoration-success="mtd_total_sales &gt; 0" decoration-warning="mtd_visit_count == 0">
+                <field name="user_id"/>
+                <field name="assigned_route_count"/>
+                <field name="assigned_route_names"/>
+                <field name="customer_count"/>
+                <field name="selected_period_label"/>
+                <field name="selected_period_date_from"/>
+                <field name="selected_period_date_to"/>
+                <field name="period_route_clients"/>
+                <field name="period_productive_clients"/>
+                <field name="period_productive_visits"/>
+                <field name="period_route_achievement"/>
+                <field name="period_route_performance"/>
+                <field name="sku_target_qty_mtd"/>
+                <field name="sku_sold_qty_mtd"/>
+                <field name="sku_target_gap_mtd"/>
+                <field name="sku_target_achievement_mtd"/>
+                <field name="sku_compliance_summary"/>
+                <field name="missed_target_skus"/>
+                <field name="today_total_sales" sum="Today Total"/>
+                <field name="mtd_total_sales" sum="MTD Total"/>
+                <field name="mtd_visit_count" sum="MTD Visits"/>
+                <field name="mtd_productive_calls" sum="Productive"/>
+                <field name="visit_compliance_mtd" widget="progressbar"/>
+                <field name="productive_rate_mtd" widget="progressbar"/>
+                <field name="missed_calls_mtd"/>
+                <field name="sku_mtd_count"/>
+                <field name="top_sku_mtd"/>
+                <field name="achievement_rate_mtd" widget="progressbar"/>
+                <field name="rank_recommendation"/><field name="ai_coach_score"/><field name="leaderboard_rank_mtd"/><field name="leaderboard_badges"/>
+                <field name="off_route_visits_mtd"/>
+                <field name="last_visit_date"/>
+            </tree>
+        </field>
+    </record>
+
+
+
+    <record id="view_sales_person_profile_kanban" model="ir.ui.view">
+        <field name="name">sales.person.profile.kanban.full.screen</field>
+        <field name="model">sales.person.profile</field>
+        <field name="arch" type="xml">
+            <kanban string="Sales Person Profiles" class="o_kanban_dashboard o_sales_person_profile_kanban o_sales_person_profile_full_kanban" create="0" edit="0" delete="0">
+
+                <field name="user_id"/>
+                <field name="partner_id"/>
+                <field name="company_id"/>
+                <field name="image_128"/>
+                <field name="assigned_route_count"/>
+                <field name="assigned_route_names"/>
+                <field name="supervised_by_names"/>
+                <field name="customer_count"/>
+                <field name="mtd_marketing_clients"/><field name="mtd_marketing_visits"/><field name="mtd_marketing_achievement"/>
+                <field name="mtd_sales_clients"/><field name="mtd_sales_visits"/><field name="mtd_sales_achievement"/>
+                <field name="mtd_van_sales_clients"/><field name="mtd_van_sales_visits"/><field name="mtd_van_sales_achievement"/>
+                <field name="mtd_retail_sales_clients"/><field name="mtd_retail_sales_visits"/><field name="mtd_retail_sales_achievement"/>
+                <field name="mtd_merchandising_clients"/><field name="mtd_merchandising_visits"/><field name="mtd_merchandising_achievement"/>
+                <field name="mtd_delivery_clients"/><field name="mtd_delivery_visits"/><field name="mtd_delivery_achievement"/>
+                <field name="mtd_other_clients"/><field name="mtd_other_visits"/><field name="mtd_other_achievement"/>
+                <field name="today_plan_count"/>
+                <field name="mtd_plan_count"/>
+                <field name="ytd_plan_count"/>
+                <field name="today_visit_count"/>
+                <field name="mtd_visit_count"/>
+                <field name="ytd_visit_count"/>
+                <field name="today_productive_calls"/>
+                <field name="mtd_productive_calls"/>
+                <field name="ytd_productive_calls"/>
+                <field name="missed_calls_mtd"/>
+                <field name="off_route_visits_mtd"/>
+                <field name="suspicious_visits_mtd"/>
+                <field name="visit_compliance_mtd"/>
+                <field name="productive_rate_mtd"/>
+                <field name="today_sales_order_count"/>
+                <field name="mtd_sales_order_count"/>
+                <field name="ytd_sales_order_count"/>
+                <field name="today_sales_amount"/>
+                <field name="mtd_sales_amount"/>
+                <field name="ytd_sales_amount"/>
+                <field name="today_pos_order_count"/>
+                <field name="mtd_pos_order_count"/>
+                <field name="ytd_pos_order_count"/>
+                <field name="today_pos_amount"/>
+                <field name="mtd_pos_amount"/>
+                <field name="ytd_pos_amount"/>
+                <field name="today_pos_amount_due"/>
+                <field name="mtd_pos_amount_due"/>
+                <field name="ytd_pos_amount_due"/>
+                <field name="today_total_sales"/>
+                <field name="mtd_total_sales"/>
+                <field name="ytd_total_sales"/>
+                <field name="last_visit_date"/>
+                <field name="last_order_date"/>
+                <field name="last_attendance_start"/>
+                <field name="last_attendance_end"/>
+                <field name="attendance_hours_mtd"/>
+                <field name="gamification_points_mtd"/>
+                <field name="sku_today_count"/>
+                <field name="sku_mtd_count"/>
+                <field name="sku_ytd_count"/>
+                <field name="top_sku_today"/>
+                <field name="top_sku_mtd"/>
+                <field name="top_sku_ytd"/>
+                <field name="target_amount_mtd"/>
+                <field name="achievement_amount_mtd"/>
+                <field name="achievement_rate_mtd"/>
+                <field name="top_5_clients"/>
+                <field name="poor_5_clients"/>
+                <field name="top_5_missed_clients"/>
+                <field name="ai_appraisal_grade"/>
+                <field name="rank_recommendation"/>
+                <field name="ai_performance_appraisal"/>
+                <field name="ai_coach_score"/>
+                <field name="ai_coach_risk"/>
+                <field name="ai_coach_summary"/>
+                <field name="ai_coach_recommendations"/>
+                <field name="leaderboard_rank_mtd"/>
+                <field name="leaderboard_badges"/>
+                <field name="selected_period_label"/>
+                <field name="selected_period_date_from"/>
+                <field name="selected_period_date_to"/>
+                <field name="period_route_clients"/>
+                <field name="period_productive_clients"/>
+                <field name="period_productive_visits"/>
+                <field name="period_route_achievement"/>
+                <field name="period_route_performance"/>
+                <field name="sku_target_qty_mtd"/>
+                <field name="sku_sold_qty_mtd"/>
+                <field name="sku_target_gap_mtd"/>
+                <field name="sku_target_achievement_mtd"/>
+                <field name="sku_compliance_summary"/>
+                <field name="missed_target_skus"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_sales_person_profile_card" style="border-radius:24px; overflow:hidden; background:#ffffff; box-shadow:0 14px 36px rgba(15,23,42,.14); border:1px solid #e5e7eb; margin:10px;">
+                            <div style="padding:18px 20px; color:#ffffff; background:linear-gradient(135deg,#1d4ed8 0%,#7c3aed 45%,#0f766e 100%);">
+                                <div style="display:flex; align-items:center; gap:16px;">
+                                    <img t-att-src="kanban_image('res.users', 'image_128', record.user_id.raw_value)" style="width:86px; height:86px; border-radius:50%; object-fit:cover; border:4px solid rgba(255,255,255,.8); background:rgba(255,255,255,.25);"/>
+                                    <div style="min-width:0; flex:1;">
+                                        <div style="font-size:22px; font-weight:900; line-height:1.1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><field name="user_id"/></div>
+                                        <div style="margin-top:7px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; font-size:12px;">
+                                            <span style="background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:5px 9px;"><b>Routes:</b> <field name="assigned_route_count"/></span>
+                                            <span style="background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:5px 9px;"><b>Customers:</b> <field name="customer_count"/></span>
+                                            <span style="background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:5px 9px;"><b>Supervisor:</b> <span t-if="record.supervised_by_names.raw_value"><field name="supervised_by_names"/></span><span t-if="!record.supervised_by_names.raw_value">Not set</span></span>
+                                        </div>
+                                        <div style="margin-top:8px; font-size:13px; font-weight:700; opacity:.95; white-space:normal;">
+                                            <span t-if="record.assigned_route_names.raw_value">Assigned Routes: <field name="assigned_route_names"/></span>
+                                            <span t-if="!record.assigned_route_names.raw_value">No route assigned</span>
+                                        </div>
+                                    </div>
+                                    <div style="display:flex; gap:10px; align-items:stretch; flex-wrap:wrap;">
+                                        <div style="text-align:center; background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.25); border-radius:18px; padding:10px 12px; min-width:82px;">
+                                            <div style="font-size:24px; font-weight:900;">#<field name="leaderboard_rank_mtd"/></div>
+                                            <div style="font-size:10px; text-transform:uppercase; letter-spacing:.08em;">MTD Rank</div>
+                                        </div>
+                                        <div t-attf-style="text-align:center; border-radius:18px; padding:10px 12px; min-width:96px; background: {record.rank_recommendation.raw_value == 'reward' and '#dcfce7' or (record.rank_recommendation.raw_value == 'terminate' and '#fee2e2' or '#fef3c7')}; color: {record.rank_recommendation.raw_value == 'reward' and '#166534' or (record.rank_recommendation.raw_value == 'terminate' and '#991b1b' or '#92400e')};">
+                                            <div style="font-size:15px; font-weight:900;"><field name="rank_recommendation"/></div>
+                                            <div style="font-size:10px; text-transform:uppercase; letter-spacing:.08em;">Decision</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="padding:18px; background:#f8fafc;">
+                                <div style="display:grid; grid-template-columns: 1.15fr 1fr 1fr; gap:14px;">
+                                    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px;">
+                                        <div style="background:linear-gradient(135deg,#ecfeff,#cffafe); border-radius:16px; padding:12px;"><div style="font-size:11px; color:#155e75; font-weight:800;">Today Sales</div><div style="font-size:20px; font-weight:900; color:#0f172a;"><field name="today_total_sales"/></div></div>
+                                        <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7); border-radius:16px; padding:12px;"><div style="font-size:11px; color:#166534; font-weight:800;">MTD Sales</div><div style="font-size:20px; font-weight:900; color:#0f172a;"><field name="mtd_total_sales"/></div></div>
+                                        <div style="background:linear-gradient(135deg,#fff7ed,#ffedd5); border-radius:16px; padding:12px;"><div style="font-size:11px; color:#9a3412; font-weight:800;">YTD Sales</div><div style="font-size:20px; font-weight:900; color:#0f172a;"><field name="ytd_total_sales"/></div></div>
+                                        <div style="background:#fff7ed; border-radius:14px; padding:10px; border:1px solid #fed7aa;"><div style="font-size:10px; color:#9a3412; font-weight:800;">POS Today Amount Due</div><div style="font-size:15px; font-weight:900;"><field name="today_pos_amount_due"/></div><div style="font-size:10px; color:#64748b;">Balance from route visits</div></div>
+                                        <div style="background:#fef3c7; border-radius:14px; padding:10px; border:1px solid #fde68a;"><div style="font-size:10px; color:#92400e; font-weight:800;">POS MTD Amount Due</div><div style="font-size:15px; font-weight:900;"><field name="mtd_pos_amount_due"/></div><div style="font-size:10px; color:#64748b;">Balance from route visits</div></div>
+                                        <div style="background:#fffbeb; border-radius:14px; padding:10px; border:1px solid #fcd34d;"><div style="font-size:10px; color:#78350f; font-weight:800;">POS YTD Amount Due</div><div style="font-size:15px; font-weight:900;"><field name="ytd_pos_amount_due"/></div><div style="font-size:10px; color:#64748b;">Balance from route visits</div></div>
+                                    </div>
+
+                                    <div style="background:#ffffff; border-radius:18px; padding:14px; border:1px solid #e2e8f0;">
+                                        <div style="font-weight:900; color:#0f172a; margin-bottom:10px;">Route Execution</div>
+                                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px;">
+                                            <div style="border-radius:12px; background:#eef2ff; padding:9px;"><div style="font-size:10px; font-weight:800; color:#4338ca;">Today Visits</div><div style="font-size:18px; font-weight:900;"><field name="today_visit_count"/></div></div>
+                                            <div style="border-radius:12px; background:#f0fdf4; padding:9px;"><div style="font-size:10px; font-weight:800; color:#15803d;">MTD Visits</div><div style="font-size:18px; font-weight:900;"><field name="mtd_visit_count"/></div></div>
+                                            <div style="border-radius:12px; background:#fefce8; padding:9px;"><div style="font-size:10px; font-weight:800; color:#a16207;">YTD Visits</div><div style="font-size:18px; font-weight:900;"><field name="ytd_visit_count"/></div></div>
+                                            <div style="border-radius:12px; background:#ecfdf5; padding:9px;"><div style="font-size:10px; font-weight:800; color:#047857;">Productive MTD</div><div style="font-size:18px; font-weight:900;"><field name="mtd_productive_calls"/></div></div>
+                                            <div style="border-radius:12px; background:#fff1f2; padding:9px;"><div style="font-size:10px; font-weight:800; color:#be123c;">Missed</div><div style="font-size:18px; font-weight:900;"><field name="missed_calls_mtd"/></div></div>
+                                            <div style="border-radius:12px; background:#fffbeb; padding:9px;"><div style="font-size:10px; font-weight:800; color:#b45309;">Off-route</div><div style="font-size:18px; font-weight:900;"><field name="off_route_visits_mtd"/></div></div>
+                                        </div>
+                                        <div style="font-size:12px; color:#334155; font-weight:800; display:flex; justify-content:space-between;"><span>Visit Compliance</span><span><field name="visit_compliance_mtd"/>%</span></div>
+                                        <div style="height:9px; border-radius:999px; background:#e2e8f0; overflow:hidden; margin:5px 0 9px;"><div t-attf-style="height:9px; width:{record.visit_compliance_mtd.raw_value || 0}%; background:linear-gradient(90deg,#22c55e,#14b8a6);"></div></div>
+                                        <div style="font-size:12px; color:#334155; font-weight:800; display:flex; justify-content:space-between;"><span>Productive Rate</span><span><field name="productive_rate_mtd"/>%</span></div>
+                                        <div style="height:9px; border-radius:999px; background:#e2e8f0; overflow:hidden; margin-top:5px;"><div t-attf-style="height:9px; width:{record.productive_rate_mtd.raw_value || 0}%; background:linear-gradient(90deg,#8b5cf6,#06b6d4);"></div></div>
+                                    </div>
+
+                                    <div style="background:#ffffff; border-radius:18px; padding:14px; border:1px solid #e2e8f0;">
+                                        <div style="font-weight:900; color:#0f172a; margin-bottom:10px;">SKU / Target</div>
+                                        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:10px;">
+                                            <div style="background:#fdf2f8; border-radius:12px; padding:9px;"><div style="font-size:10px; font-weight:800; color:#a21caf;">SKU Today</div><div style="font-size:18px; font-weight:900;"><field name="sku_today_count"/></div><div style="font-size:10px; color:#701a75; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><field name="top_sku_today"/></div></div>
+                                            <div style="background:#eff6ff; border-radius:12px; padding:9px;"><div style="font-size:10px; font-weight:800; color:#1d4ed8;">SKU MTD</div><div style="font-size:18px; font-weight:900;"><field name="sku_mtd_count"/></div><div style="font-size:10px; color:#1e3a8a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><field name="top_sku_mtd"/></div></div>
+                                            <div style="background:#fefce8; border-radius:12px; padding:9px;"><div style="font-size:10px; font-weight:800; color:#a16207;">SKU YTD</div><div style="font-size:18px; font-weight:900;"><field name="sku_ytd_count"/></div><div style="font-size:10px; color:#713f12; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"><field name="top_sku_ytd"/></div></div>
+                                        </div>
+                                        <div style="border-radius:14px; background:linear-gradient(135deg,#f8fafc,#eef2ff); padding:11px;">
+                                            <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:900; color:#334155;"><span>Target / Achievement</span><span><field name="achievement_rate_mtd"/>%</span></div>
+                                            <div style="height:10px; border-radius:999px; background:#cbd5e1; overflow:hidden; margin:7px 0;"><div t-attf-style="height:10px; width:{record.achievement_rate_mtd.raw_value || 0}%; background:linear-gradient(90deg,#f59e0b,#22c55e);"></div></div>
+                                            <div style="display:flex; justify-content:space-between; font-size:11px; color:#475569;"><span>Target: <field name="target_amount_mtd"/></span><span>Achieved: <field name="achievement_amount_mtd"/></span></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="background:linear-gradient(135deg,#0f766e,#2563eb); color:#ffffff; border-radius:20px; padding:16px; margin-top:14px; box-shadow:0 12px 26px rgba(37,99,235,.18);">
+                                    <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+                                        <div style="min-width:220px; flex:1;">
+                                            <div style="font-size:13px; font-weight:900; opacity:.9; text-transform:uppercase; letter-spacing:.06em;">Route Performance</div>
+                                            <div style="font-size:34px; line-height:1.1; font-weight:900; margin-top:4px;"><field name="period_route_performance"/></div>
+                                            <div style="font-size:12px; margin-top:6px; opacity:.94;">Counts each client once only after the first successful productive call in the selected period.</div>
+                                        </div>
+                                        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:8px; flex:2; min-width:280px;">
+                                            <div style="background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.20); border-radius:14px; padding:10px;"><div style="font-size:10px; font-weight:900; opacity:.85;">Period</div><div style="font-size:12px; font-weight:900;"><field name="selected_period_label"/></div></div>
+                                            <div style="background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.20); border-radius:14px; padding:10px;"><div style="font-size:10px; font-weight:900; opacity:.85;">Clients Served</div><div style="font-size:20px; font-weight:900;"><field name="period_productive_clients"/></div></div>
+                                            <div style="background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.20); border-radius:14px; padding:10px;"><div style="font-size:10px; font-weight:900; opacity:.85;">Route Clients</div><div style="font-size:20px; font-weight:900;"><field name="period_route_clients"/></div></div>
+                                            <div style="background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.20); border-radius:14px; padding:10px;"><div style="font-size:10px; font-weight:900; opacity:.85;">Productive Visits</div><div style="font-size:20px; font-weight:900;"><field name="period_productive_visits"/></div></div>
+                                            <div style="background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.20); border-radius:14px; padding:10px;"><div style="font-size:10px; font-weight:900; opacity:.85;">Achievement</div><div style="font-size:20px; font-weight:900;"><field name="period_route_achievement"/>%</div></div>
+                                            <button name="action_open_period_wizard" type="object" class="btn btn-light" style="border-radius:14px; font-weight:900; white-space:normal; min-height:48px;">Select Period / Custom Dates</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="margin-top:14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:18px; padding:14px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                                        <div style="font-size:15px; font-weight:900; color:#0f172a;">Visit Purpose Achievement vs Route Clients</div>
+                                        <div style="font-size:12px; font-weight:800; color:#475569;">Route Clients: <field name="customer_count"/> | MTD unique clients served per purpose</div>
+                                    </div>
+                                    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(155px, 1fr)); gap:10px;">
+                                        <button name="action_view_marketing_clients" type="object" class="btn" style="text-align:left; white-space:normal; border:0; border-radius:16px; padding:12px; background:linear-gradient(135deg,#ecfeff,#cffafe); color:#155e75;">
+                                            <div style="font-size:12px; font-weight:900;">Marketing</div><div style="font-size:22px; font-weight:900;"><field name="mtd_marketing_clients"/> / <field name="customer_count"/></div><div style="font-size:11px;">Ach: <field name="mtd_marketing_achievement"/>% | Visits: <field name="mtd_marketing_visits"/></div>
+                                        </button>
+                                        <button name="action_view_sales_clients" type="object" class="btn" style="text-align:left; white-space:normal; border:0; border-radius:16px; padding:12px; background:linear-gradient(135deg,#f0fdf4,#dcfce7); color:#166534;">
+                                            <div style="font-size:12px; font-weight:900;">Sales</div><div style="font-size:22px; font-weight:900;"><field name="mtd_sales_clients"/> / <field name="customer_count"/></div><div style="font-size:11px;">Ach: <field name="mtd_sales_achievement"/>% | Visits: <field name="mtd_sales_visits"/></div>
+                                        </button>
+                                        <button name="action_view_van_sales_clients" type="object" class="btn" style="text-align:left; white-space:normal; border:0; border-radius:16px; padding:12px; background:linear-gradient(135deg,#fff7ed,#ffedd5); color:#9a3412;">
+                                            <div style="font-size:12px; font-weight:900;">Van Sales</div><div style="font-size:22px; font-weight:900;"><field name="mtd_van_sales_clients"/> / <field name="customer_count"/></div><div style="font-size:11px;">Ach: <field name="mtd_van_sales_achievement"/>% | Visits: <field name="mtd_van_sales_visits"/></div>
+                                        </button>
+                                        <button name="action_view_retail_sales_clients" type="object" class="btn" style="text-align:left; white-space:normal; border:0; border-radius:16px; padding:12px; background:linear-gradient(135deg,#eff6ff,#dbeafe); color:#1d4ed8;">
+                                            <div style="font-size:12px; font-weight:900;">Retail</div><div style="font-size:22px; font-weight:900;"><field name="mtd_retail_sales_clients"/> / <field name="customer_count"/></div><div style="font-size:11px;">Ach: <field name="mtd_retail_sales_achievement"/>% | Visits: <field name="mtd_retail_sales_visits"/></div>
+                                        </button>
+                                        <button name="action_view_merchandising_clients" type="object" class="btn" style="text-align:left; white-space:normal; border:0; border-radius:16px; padding:12px; background:linear-gradient(135deg,#fdf2f8,#fce7f3); color:#be185d;">
+                                            <div style="font-size:12px; font-weight:900;">Merchandising</div><div style="font-size:22px; font-weight:900;"><field name="mtd_merchandising_clients"/> / <field name="customer_count"/></div><div style="font-size:11px;">Ach: <field name="mtd_merchandising_achievement"/>% | Visits: <field name="mtd_merchandising_visits"/></div>
+                                        </button>
+                                        <button name="action_view_delivery_clients" type="object" class="btn" style="text-align:left; white-space:normal; border:0; border-radius:16px; padding:12px; background:linear-gradient(135deg,#f5f3ff,#ede9fe); color:#6d28d9;">
+                                            <div style="font-size:12px; font-weight:900;">Delivery</div><div style="font-size:22px; font-weight:900;"><field name="mtd_delivery_clients"/> / <field name="customer_count"/></div><div style="font-size:11px;">Ach: <field name="mtd_delivery_achievement"/>% | Visits: <field name="mtd_delivery_visits"/></div>
+                                        </button>
+                                        <button name="action_view_other_purpose_clients" type="object" class="btn" style="text-align:left; white-space:normal; border:0; border-radius:16px; padding:12px; background:linear-gradient(135deg,#f1f5f9,#e2e8f0); color:#334155;">
+                                            <div style="font-size:12px; font-weight:900;">Other</div><div style="font-size:22px; font-weight:900;"><field name="mtd_other_clients"/> / <field name="customer_count"/></div><div style="font-size:11px;">Ach: <field name="mtd_other_achievement"/>% | Visits: <field name="mtd_other_visits"/></div>
+                                        </button>
+                                    </div>
+                                </div>
+
+
+                                <div style="margin-top:14px; background:linear-gradient(135deg,#fdf2f8,#eef2ff); border:1px solid #ddd6fe; border-radius:18px; padding:14px;">
+                                    <div style="display:flex; justify-content:space-between; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
+                                        <div style="font-size:15px; font-weight:900; color:#312e81;">SKU Target Tracking</div>
+                                        <button name="action_view_sku_target_performance" type="object" class="btn btn-sm btn-primary" style="border-radius:999px; font-weight:800;">Open SKU Tracking</button>
+                                    </div>
+                                    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(135px,1fr)); gap:10px;">
+                                        <div style="background:#ffffff; border-radius:14px; padding:10px; border:1px solid #e9d5ff;"><div style="font-size:10px; font-weight:900; color:#7e22ce;">Target Qty</div><div style="font-size:22px; font-weight:900;"><field name="sku_target_qty_mtd"/></div></div>
+                                        <div style="background:#ffffff; border-radius:14px; padding:10px; border:1px solid #bfdbfe;"><div style="font-size:10px; font-weight:900; color:#1d4ed8;">Sold Qty</div><div style="font-size:22px; font-weight:900;"><field name="sku_sold_qty_mtd"/></div></div>
+                                        <div style="background:#ffffff; border-radius:14px; padding:10px; border:1px solid #fecaca;"><div style="font-size:10px; font-weight:900; color:#b91c1c;">Gap Qty</div><div style="font-size:22px; font-weight:900;"><field name="sku_target_gap_mtd"/></div></div>
+                                        <div style="background:#ffffff; border-radius:14px; padding:10px; border:1px solid #bbf7d0;"><div style="font-size:10px; font-weight:900; color:#15803d;">Achievement</div><div style="font-size:22px; font-weight:900;"><field name="sku_target_achievement_mtd"/>%</div></div>
+                                    </div>
+                                    <div style="height:10px; border-radius:999px; background:#dbeafe; overflow:hidden; margin:10px 0;"><div t-attf-style="height:10px; width:{Math.min(record.sku_target_achievement_mtd.raw_value || 0, 100)}%; background:linear-gradient(90deg,#8b5cf6,#22c55e);"></div></div>
+                                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                                        <div style="font-size:12px; color:#334155; background:rgba(255,255,255,.75); border-radius:12px; padding:10px;"><b>Summary:</b> <field name="sku_compliance_summary"/></div>
+                                        <div style="font-size:12px; color:#7f1d1d; background:rgba(255,255,255,.75); border-radius:12px; padding:10px; white-space:pre-line;"><b>Top Missed SKUs</b><br/><field name="missed_target_skus"/></div>
+                                    </div>
+                                </div>
+
+                                <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1.15fr; gap:14px; margin-top:14px;">
+                                    <div style="background:#f0fdf4; color:#14532d; border-radius:18px; padding:13px; font-size:12px; white-space:pre-line; min-height:120px;"><b>Top 5 Clients</b><br/><field name="top_5_clients"/></div>
+                                    <div style="background:#fff7ed; color:#7c2d12; border-radius:18px; padding:13px; font-size:12px; white-space:pre-line; min-height:120px;"><b>Poor 5 Clients</b><br/><field name="poor_5_clients"/></div>
+                                    <div style="background:#fff1f2; color:#881337; border-radius:18px; padding:13px; font-size:12px; white-space:pre-line; min-height:120px;"><b>Top 5 Missed Clients</b><br/><field name="top_5_missed_clients"/></div>
+                                    <div style="background:linear-gradient(135deg,#0f172a,#312e81); color:#ffffff; border-radius:18px; padding:13px; font-size:12px; min-height:120px; box-shadow:inset 0 0 0 1px rgba(255,255,255,.10);">
+                                        <div style="display:flex; justify-content:space-between; gap:8px; align-items:center; margin-bottom:7px;"><b style="font-size:14px;">🤖 AI Sales Coach</b><span style="border-radius:999px; background:rgba(255,255,255,.18); padding:4px 8px; font-weight:900;"><field name="ai_coach_score"/>/100</span></div>
+                                        <div><b>Risk:</b> <field name="ai_coach_risk"/> | <b>Badges:</b> <field name="leaderboard_badges"/></div>
+                                        <div style="margin-top:6px;"><field name="ai_coach_summary"/></div>
+                                        <div style="white-space:pre-line; margin-top:6px; opacity:.95;"><field name="ai_coach_recommendations"/></div>
+                                    </div>
+                                </div>
+
+                                <div style="display:grid; grid-template-columns: 1fr 1.25fr auto; gap:14px; align-items:stretch; margin-top:14px;">
+                                    <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:16px; padding:12px; font-size:12px; color:#475569;">
+                                        <div><b>Plans:</b> Today <field name="today_plan_count"/> | MTD <field name="mtd_plan_count"/> | YTD <field name="ytd_plan_count"/></div>
+                                        <div><b>Orders:</b> Today <field name="today_sales_order_count"/> | MTD <field name="mtd_sales_order_count"/> | YTD <field name="ytd_sales_order_count"/></div>
+                                        <div><b>Attendance:</b> MTD <field name="attendance_hours_mtd"/> hrs | Points <field name="gamification_points_mtd"/> | Risk <field name="suspicious_visits_mtd"/></div>
+                                        <div><b>Last Visit:</b> <field name="last_visit_date"/> | <b>Last Order:</b> <field name="last_order_date"/></div>
+                                    </div>
+                                    <div style="background:linear-gradient(135deg,#eef2ff,#f5f3ff); color:#312e81; border-radius:16px; padding:12px; font-size:12px;">
+                                        <b>AI Suggested Appraisal:</b> <field name="ai_appraisal_grade"/> — <b>Rank:</b> <field name="rank_recommendation"/><br/>
+                                        <span><field name="ai_performance_appraisal"/></span>
+                                    </div>
+                                    <div style="display:flex; gap:7px; align-items:center; justify-content:flex-end; flex-wrap:wrap; min-width:360px;">
+                                        <button name="action_open_period_wizard" type="object" string="Period" class="btn btn-primary btn-sm"/>
+                                        <button name="action_view_period_productive_clients" type="object" string="Route Performance" class="btn btn-secondary btn-sm"/>
+                                        <button name="action_view_routes" type="object" string="Routes" class="btn btn-primary btn-sm"/>
+                                        <button name="action_view_plans" type="object" string="Plans" class="btn btn-secondary btn-sm"/>
+                                        <button name="action_view_visits" type="object" string="Visits" class="btn btn-secondary btn-sm"/>
+                                        <button name="action_view_sale_orders" type="object" string="Sales" class="btn btn-secondary btn-sm"/>
+                                        <button name="action_view_pos_orders" type="object" string="POS" class="btn btn-secondary btn-sm"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_sales_person_profile_search" model="ir.ui.view">
+        <field name="name">sales.person.profile.search</field>
+        <field name="model">sales.person.profile</field>
+        <field name="arch" type="xml">
+            <search string="Search Sales Person Profiles">
+                <field name="user_id"/>
+                <field name="assigned_route_names" string="Route"/>
+                <filter name="has_routes" string="Has Routes" domain="[('assigned_route_count','&gt;',0)]"/>
+                <filter name="active_this_month" string="Active This Month" domain="[('mtd_visit_count','&gt;',0)]"/>
+                <filter name="sold_this_month" string="Sold This Month" domain="[('mtd_total_sales','&gt;',0)]"/>
+                <filter name="risk_flags" string="Risk Flags" domain="['|',('missed_calls_mtd','&gt;',0),('suspicious_visits_mtd','&gt;',0)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_company" string="Company" context="{'group_by':'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_sales_person_profile_form" model="ir.ui.view">
+        <field name="name">sales.person.profile.form</field>
+        <field name="model">sales.person.profile</field>
+        <field name="arch" type="xml">
+            <form string="Sales Person Profile" create="0" edit="0" delete="0">
+                <header>
+                    <button name="action_view_routes" string="Routes" type="object" class="oe_highlight"/>
+                    <button name="action_view_plans" string="Plans" type="object"/>
+                    <button name="action_view_visits" string="Visits" type="object"/>
+                    <button name="action_view_sale_orders" string="Sale Orders" type="object"/>
+                    <button name="action_view_pos_orders" string="POS Orders" type="object"/>
+                    <button name="action_view_attendance" string="Attendance" type="object"/>
+                    <button name="action_open_period_wizard" string="Select Period" type="object" class="oe_highlight"/>
+                    <button name="action_view_sku_target_performance" string="SKU Target Tracking" type="object"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="user_id" readonly="1"/></h1>
+                        <h3><field name="assigned_route_names" readonly="1" placeholder="No route assigned"/></h3>
+                    </div>
+                    <group string="Quick Profile">
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="company_id"/>
+                <field name="image_128"/>
+                            <field name="supervised_by_names"/>
+                            <field name="assigned_route_count"/>
+                            <field name="customer_count"/>
+                        </group>
+                        <group>
+                            <field name="last_visit_date"/>
+                            <field name="last_order_date"/>
+                            <field name="last_attendance_start"/>
+                            <field name="last_attendance_end"/>
+                        </group>
+                    </group>
+                    <group string="Selected Sales / Marketing Period Route Performance">
+                        <group>
+                            <field name="selected_period_label"/>
+                            <field name="selected_period_date_from"/>
+                            <field name="selected_period_date_to"/>
+                            <field name="period_route_performance"/>
+                <field name="sku_target_qty_mtd"/>
+                <field name="sku_sold_qty_mtd"/>
+                <field name="sku_target_gap_mtd"/>
+                <field name="sku_target_achievement_mtd"/>
+                <field name="sku_compliance_summary"/>
+                <field name="missed_target_skus"/>
+                        </group>
+                        <group>
+                            <field name="period_productive_clients"/>
+                            <field name="period_route_clients"/>
+                            <field name="period_productive_visits"/>
+                            <field name="period_route_achievement" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <group string="Sales Performance">
+                        <group string="Today">
+                            <field name="today_total_sales"/>
+                            <field name="today_sales_order_count"/>
+                            <field name="today_sales_amount"/>
+                            <field name="today_pos_order_count"/>
+                            <field name="today_pos_amount"/>
+                        </group>
+                        <group string="This Month">
+                            <field name="mtd_total_sales"/>
+                            <field name="mtd_sales_order_count"/>
+                            <field name="mtd_sales_amount"/>
+                            <field name="mtd_pos_order_count"/>
+                            <field name="mtd_pos_amount"/>
+                        </group>
+                        <group string="This Year">
+                            <field name="ytd_total_sales"/>
+                            <field name="ytd_sales_order_count"/>
+                            <field name="ytd_sales_amount"/>
+                            <field name="ytd_pos_order_count"/>
+                            <field name="ytd_pos_amount"/>
+                        </group>
+                    </group>
+                    <group string="SKU / Client / Appraisal Intelligence">
+                        <group string="SKUs">
+                            <field name="sku_today_count"/>
+                            <field name="sku_mtd_count"/>
+                            <field name="sku_ytd_count"/>
+                            <field name="top_sku_today"/>
+                            <field name="top_sku_mtd"/>
+                            <field name="top_sku_ytd"/>
+                        </group>
+                        <group string="Target / Achievement / Rank">
+                            <field name="target_amount_mtd"/>
+                            <field name="achievement_amount_mtd"/>
+                            <field name="achievement_rate_mtd" widget="progressbar"/>
+                            <field name="ai_appraisal_grade"/>
+                            <field name="rank_recommendation"/>
+                        </group>
+                        <group string="Client Rankings">
+                            <field name="top_5_clients" nolabel="1"/>
+                            <field name="poor_5_clients" nolabel="1"/>
+                            <field name="top_5_missed_clients" nolabel="1"/>
+                        </group>
+                        <group string="AI Suggested Performance Appraisal">
+                            <field name="ai_performance_appraisal" nolabel="1"/>
+                        </group>
+                        <group string="AI Sales Coach &amp; Leaderboard">
+                            <field name="ai_coach_score"/>
+                            <field name="ai_coach_risk"/>
+                            <field name="leaderboard_rank_mtd"/>
+                            <field name="leaderboard_badges"/>
+                            <field name="ai_coach_summary" nolabel="1"/>
+                            <field name="ai_coach_recommendations" nolabel="1"/>
+                        </group>
+                    </group>
+                    <group string="MTD Visit Purpose Achievement vs Route Clients">
+                        <group string="Marketing / Sales">
+                            <field name="customer_count"/>
+                            <field name="mtd_marketing_clients"/><field name="mtd_marketing_visits"/><field name="mtd_marketing_achievement" widget="progressbar"/>
+                            <field name="mtd_sales_clients"/><field name="mtd_sales_visits"/><field name="mtd_sales_achievement" widget="progressbar"/>
+                            <field name="mtd_van_sales_clients"/><field name="mtd_van_sales_visits"/><field name="mtd_van_sales_achievement" widget="progressbar"/>
+                        </group>
+                        <group string="Retail / Merch / Delivery">
+                            <field name="mtd_retail_sales_clients"/><field name="mtd_retail_sales_visits"/><field name="mtd_retail_sales_achievement" widget="progressbar"/>
+                            <field name="mtd_merchandising_clients"/><field name="mtd_merchandising_visits"/><field name="mtd_merchandising_achievement" widget="progressbar"/>
+                            <field name="mtd_delivery_clients"/><field name="mtd_delivery_visits"/><field name="mtd_delivery_achievement" widget="progressbar"/>
+                            <field name="mtd_other_clients"/><field name="mtd_other_visits"/><field name="mtd_other_achievement" widget="progressbar"/>
+                        </group>
+                    </group>
+                    <group string="Route Execution">
+                        <group string="Today">
+                            <field name="today_plan_count"/>
+                            <field name="today_visit_count"/>
+                            <field name="today_productive_calls"/>
+                        </group>
+                        <group string="This Month">
+                            <field name="mtd_plan_count"/>
+                            <field name="mtd_visit_count"/>
+                            <field name="mtd_productive_calls"/>
+                            <field name="visit_compliance_mtd" widget="progressbar"/>
+                            <field name="productive_rate_mtd" widget="progressbar"/>
+                        </group>
+                        <group string="Controls / Exceptions">
+                            <field name="missed_calls_mtd"/>
+                            <field name="off_route_visits_mtd"/>
+                            <field name="suspicious_visits_mtd"/>
+                            <field name="attendance_hours_mtd"/>
+                            <field name="gamification_points_mtd"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_sales_person_profile_pivot" model="ir.ui.view">
+        <field name="name">sales.person.profile.pivot</field>
+        <field name="model">sales.person.profile</field>
+        <field name="arch" type="xml">
+            <pivot string="Sales Person Profiles">
+                <field name="user_id" type="row"/>
+                <field name="mtd_total_sales" type="measure"/>
+                <field name="mtd_visit_count" type="measure"/>
+                <field name="mtd_productive_calls" type="measure"/>
+                <field name="missed_calls_mtd" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_sales_person_profile_graph" model="ir.ui.view">
+        <field name="name">sales.person.profile.graph</field>
+        <field name="model">sales.person.profile</field>
+        <field name="arch" type="xml">
+            <graph string="Sales Person MTD Performance" type="bar">
+                <field name="user_id"/>
+                <field name="mtd_total_sales" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_sales_person_profile" model="ir.actions.act_window">
+        <field name="name">Sales Person Profiles</field>
+        <field name="res_model">sales.person.profile</field>
+        <field name="view_mode">kanban,tree,form,pivot,graph</field>
+        <field name="context">{}</field>
+    </record>
+
+    <record id="action_sales_person_leaderboard" model="ir.actions.act_window">
+        <field name="name">AI Sales Coach Leaderboard</field>
+        <field name="res_model">sales.person.profile</field>
+        <field name="view_mode">kanban,tree,form,pivot,graph</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">AI Sales Coach and Leaderboard</p>
+            <p>Use this screen to compare salesperson rankings, badges, coaching risk and recommendations.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_sales_person_profile" name="Sales Person Profiles" parent="menu_field_sales_reports" action="action_sales_person_profile" sequence="4" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+    <menuitem id="menu_sales_person_leaderboard" name="AI Coach Leaderboard" parent="menu_field_sales_reports" action="action_sales_person_leaderboard" sequence="5" groups="field_sales_route_plan.group_field_sales_supervisor,field_sales_route_plan.group_field_sales_manager"/>
+</odoo>

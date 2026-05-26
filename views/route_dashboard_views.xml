@@ -1,0 +1,33 @@
+<odoo>
+    <record id="view_route_dashboard_report_tree" model="ir.ui.view">
+        <field name="name">sales.route.dashboard.report.tree</field>
+        <field name="model">sales.route.dashboard.report</field>
+        <field name="arch" type="xml">
+            <tree create="0" edit="0" delete="0" decoration-danger="off_route_visits &gt; 0 or suspicious_visits &gt; 0">
+                <field name="plan_date"/><field name="user_id"/><field name="route_id"/><field name="planned_calls"/>
+                <field name="visited_calls"/><field name="visit_compliance" widget="percentage"/><field name="route_customer_count"/><field name="mtd_unique_clients_served"/><field name="mtd_route_client_achievement" widget="percentage"/>
+                <field name="productive_calls"/><field name="productive_compliance" widget="percentage"/>
+                <field name="unproductive_calls"/><field name="missed_calls"/><field name="off_route_visits"/><field name="suspicious_visits"/>
+                <field name="gps_compliant_visits"/><field name="marketing_clients_served" sum="Marketing Clients"/><field name="marketing_visit_count" sum="Marketing Visits"/><field name="sales_clients_served" sum="Sales Clients"/><field name="sales_visit_count" sum="Sales Visits"/><field name="van_sales_clients_served" sum="Van Sales Clients"/><field name="van_sales_visit_count" sum="Van Sales Visits"/><field name="retail_clients_served" sum="Retail Clients"/><field name="retail_visit_count" sum="Retail Visits"/><field name="merchandising_clients_served" sum="Merch Clients"/><field name="merchandising_visit_count" sum="Merch Visits"/><field name="delivery_clients_served" sum="Delivery Clients"/><field name="delivery_visit_count" sum="Delivery Visits"/><field name="other_clients_served" sum="Other Clients"/><field name="other_visit_count" sum="Other Visits"/><field name="total_sales_amount" sum="Sales"/><field name="mtd_visits"/><field name="ytd_visits"/><field name="mtd_sales_orders"/><field name="ytd_sales_orders"/><field name="mtd_sales_amount" sum="MTD Sales"/><field name="ytd_sales_amount" sum="YTD Sales"/><field name="today_van_sales_amount" sum="Today Van Sales"/><field name="mtd_van_sales_amount" sum="MTD Van Sales"/><field name="ytd_van_sales_amount" sum="YTD Van Sales"/><field name="today_pos_payments" sum="Today POS Payments"/><field name="mtd_pos_payments" sum="MTD POS Payments"/><field name="ytd_pos_payments" sum="YTD POS Payments"/><field name="today_amount_due" sum="Today Amount Due"/><field name="mtd_amount_due" sum="MTD Amount Due"/><field name="ytd_amount_due" sum="YTD Amount Due"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_route_dashboard_report_pivot" model="ir.ui.view">
+        <field name="name">sales.route.dashboard.report.pivot</field>
+        <field name="model">sales.route.dashboard.report</field>
+        <field name="arch" type="xml">
+            <pivot><field name="route_id" type="row"/><field name="user_id" type="row"/><field name="plan_date" type="col" interval="day"/><field name="visited_calls" type="measure"/><field name="mtd_unique_clients_served" type="measure"/><field name="productive_calls" type="measure"/><field name="unproductive_calls" type="measure"/><field name="missed_calls" type="measure"/><field name="route_customer_count" type="measure"/><field name="mtd_unique_clients_served" type="measure"/><field name="mtd_route_client_achievement" type="measure"/><field name="marketing_clients_served" type="measure"/><field name="marketing_visit_count" type="measure"/><field name="sales_clients_served" type="measure"/><field name="sales_visit_count" type="measure"/><field name="van_sales_clients_served" type="measure"/><field name="van_sales_visit_count" type="measure"/><field name="retail_clients_served" type="measure"/><field name="retail_visit_count" type="measure"/><field name="merchandising_clients_served" type="measure"/><field name="merchandising_visit_count" type="measure"/><field name="delivery_clients_served" type="measure"/><field name="delivery_visit_count" type="measure"/><field name="other_clients_served" type="measure"/><field name="other_visit_count" type="measure"/><field name="off_route_visits" type="measure"/><field name="suspicious_visits" type="measure"/><field name="total_sales_amount" type="measure"/><field name="mtd_visits" type="measure"/><field name="ytd_visits" type="measure"/><field name="mtd_sales_orders" type="measure"/><field name="ytd_sales_orders" type="measure"/><field name="mtd_sales_amount" type="measure"/><field name="ytd_sales_amount" type="measure"/><field name="today_van_sales_amount" type="measure"/><field name="mtd_van_sales_amount" type="measure"/><field name="ytd_van_sales_amount" type="measure"/><field name="today_pos_payments" type="measure"/><field name="mtd_pos_payments" type="measure"/><field name="ytd_pos_payments" type="measure"/><field name="today_amount_due" type="measure"/><field name="mtd_amount_due" type="measure"/><field name="ytd_amount_due" type="measure"/></pivot>
+        </field>
+    </record>
+    <record id="view_route_dashboard_report_graph" model="ir.ui.view">
+        <field name="name">sales.route.dashboard.report.graph</field>
+        <field name="model">sales.route.dashboard.report</field>
+        <field name="arch" type="xml"><graph type="bar"><field name="route_id"/><field name="mtd_unique_clients_served" type="measure"/><field name="productive_calls" type="measure"/><field name="unproductive_calls" type="measure"/><field name="missed_calls" type="measure"/></graph></field>
+    </record>
+    <record id="action_route_manager_dashboard" model="ir.actions.act_window">
+        <field name="name">Manager Dashboard</field>
+        <field name="res_model">sales.route.dashboard.report</field>
+        <field name="view_mode">graph,pivot,tree</field>
+        <field name="context">{'search_default_this_month': 1}</field>
+    </record>
+</odoo>

@@ -1,0 +1,9 @@
+Complete rebuild verification
+- Built from the full module source tree, not a partial patch.
+- AI Sales Coach and Leaderboard included in models/sales_person_profile.py and views/sales_person_profile_views.xml.
+- Fixed Odoo read_group crash by removing invalid orderby on partner_id_count and sorting grouped results in Python.
+- Manifest data files verified present.
+- Manifest asset files verified present.
+- Python files compiled successfully.
+- XML files parsed successfully.
+- Static JS/XML/SCSS assets included.

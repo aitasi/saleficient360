@@ -1,0 +1,12 @@
+<odoo>
+    <record id="view_sales_route_call_reason_tree" model="ir.ui.view">
+        <field name="name">sales.route.call.reason.tree</field>
+        <field name="model">sales.route.call.reason</field>
+        <field name="arch" type="xml"><tree editable="bottom"><field name="sequence" widget="handle"/><field name="name"/><field name="category"/><field name="active"/></tree></field>
+    </record>
+    <record id="action_sales_route_call_reason" model="ir.actions.act_window">
+        <field name="name">Unproductive Call Reasons</field>
+        <field name="res_model">sales.route.call.reason</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

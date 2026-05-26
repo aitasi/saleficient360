@@ -1,0 +1,53 @@
+<odoo>
+    <record id="view_sales_route_ai_chat_tree" model="ir.ui.view">
+        <field name="name">sales.route.ai.chat.tree</field>
+        <field name="model">sales.route.ai.chat</field>
+        <field name="arch" type="xml">
+            <tree string="AI Chat Assistant">
+                <field name="create_date"/>
+                <field name="user_id"/>
+                <field name="partner_id"/>
+                <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                <field name="visit_id"/>
+                <field name="question"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_sales_route_ai_chat_form" model="ir.ui.view">
+        <field name="name">sales.route.ai.chat.form</field>
+        <field name="model">sales.route.ai.chat</field>
+        <field name="arch" type="xml">
+            <form string="AI Chat Assistant">
+                <header>
+                    <button name="action_ask" type="object" string="Ask Assistant" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="user_id" readonly="1"/>
+                            <field name="partner_id"/>
+                            <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                            <field name="visit_id"/>
+                        </group>
+                    </group>
+                    <group string="Ask">
+                        <field name="question" nolabel="1" placeholder="Ask: What should I sell this client? Who needs follow-up? What should I do for delivery?"/>
+                    </group>
+                    <group string="Assistant Answer">
+                        <field name="answer" nolabel="1" readonly="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter"><field name="message_follower_ids"/><field name="message_ids"/></div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sales_route_ai_chat" model="ir.actions.act_window">
+        <field name="name">AI Chat Assistant</field>
+        <field name="res_model">sales.route.ai.chat</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'default_user_id': uid}</field>
+    </record>
+</odoo>

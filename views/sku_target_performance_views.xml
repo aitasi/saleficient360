@@ -1,0 +1,86 @@
+<odoo>
+    <record id="view_sku_target_performance_tree" model="ir.ui.view">
+        <field name="name">sales.route.sku.target.performance.tree</field>
+        <field name="model">sales.route.sku.target.performance</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="compliance_state == 'achieved'" decoration-warning="compliance_state == 'behind'" decoration-danger="compliance_state in ('critical','not_started')">
+                <field name="salesperson_id"/>
+                <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                <field name="target_id"/>
+                <field name="product_category_id"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="target_qty" sum="Target Qty"/>
+                <field name="total_qty" sum="Sold Qty"/>
+                <field name="gap_qty" sum="Gap Qty"/>
+                <field name="achievement_percent" widget="progressbar"/>
+                <field name="target_amount" sum="Target Amount"/>
+                <field name="total_amount" sum="Sold Amount"/>
+                <field name="compliance_state" widget="badge"/>
+                <field name="last_recomputed"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_sku_target_performance_kanban" model="ir.ui.view">
+        <field name="name">sales.route.sku.target.performance.kanban</field>
+        <field name="model">sales.route.sku.target.performance</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="display_name"/><field name="salesperson_id"/><field name="route_id"/><field name="product_category_id"/><field name="target_qty"/><field name="total_qty"/><field name="gap_qty"/><field name="achievement_percent"/><field name="compliance_state"/>
+                <templates><t t-name="kanban-box">
+                    <div class="oe_kanban_global_click o_kanban_record" style="border-radius:16px; padding:14px; border:1px solid #e2e8f0;">
+                        <strong><field name="product_category_id"/></strong>
+                        <div class="text-muted"><field name="salesperson_id"/> • <field name="route_id"/></div>
+                        <div style="display:flex; justify-content:space-between; margin-top:10px; font-weight:800;"><span>Sold / Target</span><span><field name="total_qty"/> / <field name="target_qty"/></span></div>
+                        <field name="achievement_percent" widget="progressbar"/>
+                        <div style="display:flex; justify-content:space-between; margin-top:6px;"><span>Gap: <field name="gap_qty"/></span><field name="compliance_state" widget="badge"/></div>
+                    </div>
+                </t></templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_sku_target_performance_search" model="ir.ui.view">
+        <field name="name">sales.route.sku.target.performance.search</field>
+        <field name="model">sales.route.sku.target.performance</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="salesperson_id"/><field name="route_id"/><field name="target_id"/><field name="product_category_id"/><filter name="underperforming" string="Underperforming" domain="[('achievement_percent','&lt;',80)]"/>
+                <filter name="achieved" string="Achieved" domain="[('achievement_percent','&gt;=',100)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_salesperson" string="Salesperson" context="{'group_by':'salesperson_id'}"/>
+                    <filter name="group_route" string="Route" context="{'group_by':'route_id'}"/>
+                    <filter name="group_category" string="Category" context="{'group_by':'product_category_id'}"/>
+                    </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_sku_target_performance_pivot" model="ir.ui.view">
+        <field name="name">sales.route.sku.target.performance.pivot</field>
+        <field name="model">sales.route.sku.target.performance</field>
+        <field name="arch" type="xml">
+            <pivot string="Category SKU Target Performance">
+                <field name="salesperson_id" type="row"/>
+                <field name="product_category_id" type="col"/>
+                <field name="target_qty" type="measure"/>
+                <field name="total_qty" type="measure"/>
+                <field name="gap_qty" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="view_sku_target_performance_graph" model="ir.ui.view">
+        <field name="name">sales.route.sku.target.performance.graph</field>
+        <field name="model">sales.route.sku.target.performance</field>
+        <field name="arch" type="xml"><graph string="Category SKU Target Performance" type="bar"><field name="product_category_id"/><field name="total_qty" type="measure"/><field name="target_qty" type="measure"/></graph></field>
+    </record>
+
+    <record id="action_sku_target_performance" model="ir.actions.act_window">
+        <field name="name">Category SKU Target Performance</field>
+        <field name="res_model">sales.route.sku.target.performance</field>
+        <field name="view_mode">tree,kanban,pivot,graph</field>
+        <field name="context">{'search_default_underperforming': 1}</field>
+    </record>
+</odoo>
