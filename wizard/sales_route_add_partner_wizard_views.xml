@@ -1,0 +1,23 @@
+<odoo>
+    <record id="view_sales_route_add_partner_wizard_form" model="ir.ui.view">
+        <field name="name">sales.route.add.partner.wizard.form</field>
+        <field name="model">sales.route.add.partner.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Add Existing Customers to Route">
+                <group>
+                    <field name="route_id" readonly="1"/>
+                    <field name="current_route_partner_ids" invisible="1"/>
+                    <field name="partner_ids" widget="many2many_tags"
+                           context="{'default_customer_rank': 1}"
+                           options="{'no_create_edit': False, 'no_create': False}"/>
+                    <field name="set_salesperson"/>
+                    <field name="overwrite_existing_route"/>
+                </group>
+                <footer>
+                    <button name="action_add_partners" string="Add to Route" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

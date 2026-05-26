@@ -1,0 +1,102 @@
+<odoo>
+    <record id="view_sales_route_marketing_quick_wizard_form" model="ir.ui.view">
+        <field name="name">sales.route.marketing.quick.wizard.form</field>
+        <field name="model">sales.route.marketing.quick.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Marketing Visit" class="fsrp-marketing-quick-form fsrp-marketing-modern-form">
+                <sheet>
+                    <field name="visit_id" invisible="1"/>
+                    <field name="program_issued" invisible="1"/>
+                    <field name="program_custom_count" invisible="1"/>
+
+                    <div class="fsrp-mkt-hero">
+                        <div>
+                            <div class="fsrp-mkt-eyebrow">Marketing Visit Capture</div>
+                            <h2>Programmes, contact person &amp; notes</h2>
+                            <p>Tick the catalogues issued, add contact details, then continue to the visit form for GPS check-in and check-out.</p>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-mkt-summary-grid">
+                        <div class="fsrp-mkt-summary-card">
+                            <span>Client</span>
+                            <field name="partner_id" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="fsrp-mkt-summary-card">
+                            <span>Route</span>
+                            <field name="route_id" readonly="1" nolabel="1"/>
+                        </div>
+                        <div class="fsrp-mkt-summary-card fsrp-mkt-summary-count">
+                            <span>Program Count</span>
+                            <field name="program_count" readonly="1" nolabel="1"/>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-mkt-steps">
+                        <div class="fsrp-mkt-step-card fsrp-mkt-program-card">
+                            <div class="fsrp-mkt-card-header">
+                                <div class="fsrp-mkt-step-badge">1</div>
+                                <div>
+                                    <h3>Programmes / Catalogues Issued</h3>
+                                    <p>Switch ON every programme issued. ON saves count 1; OFF saves count 0.</p>
+                                </div>
+                            </div>
+                            <div class="fsrp-program-checkbox-panel">
+                                <field name="program_ids" nolabel="1" widget="many2many_checkboxes"/>
+                            </div>
+                            <div class="fsrp-mkt-count-hint">Selected programmes/catalogues are counted automatically. Each selected item = 1; unselected items = 0.</div>
+                        </div>
+
+                        <div class="fsrp-mkt-step-card fsrp-mkt-details-card">
+                            <div class="fsrp-mkt-card-header">
+                                <div class="fsrp-mkt-step-badge">2</div>
+                                <div>
+                                    <h3>Contact Person &amp; Marketing Notes</h3>
+                                    <p>Capture the person met and the activities completed at the client location.</p>
+                                </div>
+                            </div>
+                            <div class="fsrp-mkt-detail-grid">
+                                <div class="fsrp-mkt-inner-card fsrp-mkt-contact-card">
+                                    <h4>Contact Person</h4>
+                                    <group>
+                                        <field name="contact_person_name" placeholder="Contact name"/>
+                                        <field name="contact_person_phone" placeholder="Phone number"/>
+                                        <field name="contact_person_email" placeholder="Email address"/>
+                                    </group>
+                                </div>
+                                <div class="fsrp-mkt-inner-card fsrp-mkt-activities-card">
+                                    <h4>Activities Done</h4>
+                                    <field name="marketing_activities_done" nolabel="1" placeholder="Catalogue shared, promotion explained, display checked, customer trained..."/>
+                                </div>
+                                <div class="fsrp-mkt-inner-card fsrp-mkt-notes-card">
+                                    <h4>Feedback / Notes</h4>
+                                    <field name="marketing_notes" nolabel="1" placeholder="Feedback, objections, next actions or follow-up notes..."/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-mkt-step-card fsrp-mkt-followup-card">
+                        <div class="fsrp-mkt-card-header">
+                            <div class="fsrp-mkt-step-badge fsrp-mkt-step-badge-light">+</div>
+                            <div>
+                                <h3>Optional Follow-up</h3>
+                                <p>Add a follow-up activity only when needed.</p>
+                            </div>
+                        </div>
+                        <group col="3" class="fsrp-mkt-followup-grid">
+                            <field name="followup_activity_type_id"/>
+                            <field name="followup_date_deadline"/>
+                            <field name="followup_summary" placeholder="Follow-up summary"/>
+                        </group>
+                        <field name="followup_note" nolabel="1" placeholder="Follow-up notes..."/>
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_save_and_open_visit" type="object" string="Save &amp; Open Visit" class="btn-primary fsrp-mkt-primary-btn"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

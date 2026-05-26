@@ -1,0 +1,102 @@
+<odoo>
+    <record id="view_sales_route_quick_plan_wizard_form" model="ir.ui.view">
+        <field name="name">sales.route.quick.plan.wizard.form</field>
+        <field name="model">sales.route.quick.plan.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Quick Route Plan" class="fsrp-quick-plan-wizard">
+                <sheet>
+                    <div class="fsrp-quick-hero">
+                        <div>
+                            <span class="fsrp-quick-eyebrow">Mobile route planning</span>
+                            <h2>Create today's route plan fast</h2>
+                            <p>Select the route, choose the clients to visit, set the visit defaults, then submit the plan for approval.</p>
+                        </div>
+                        <div class="fsrp-quick-counts">
+                            <div class="fsrp-quick-count-card">
+                                <span>Available</span>
+                                <strong><field name="available_client_count" readonly="1" nolabel="1"/></strong>
+                                <small>route clients</small>
+                            </div>
+                            <div class="fsrp-quick-count-card fsrp-quick-count-selected">
+                                <span>Selected</span>
+                                <strong><field name="selected_client_count" readonly="1" nolabel="1"/></strong>
+                                <small>for this plan</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-quick-grid">
+                        <div class="fsrp-quick-card fsrp-quick-main-card">
+                            <div class="fsrp-card-title">
+                                <span class="fsrp-card-icon">1</span>
+                                <div>
+                                    <strong>Plan details</strong>
+                                    <small>Date, salesperson and market route</small>
+                                </div>
+                            </div>
+                            <group col="2" class="fsrp-compact-group">
+                                <field name="plan_date"/>
+                                <field name="user_id"/>
+                                <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                                <field name="supervisor_id" readonly="1"/>
+                                <field name="planned_productive_calls"/>
+                            </group>
+                        </div>
+
+                        <div class="fsrp-quick-card fsrp-quick-main-card">
+                            <div class="fsrp-card-title">
+                                <span class="fsrp-card-icon">2</span>
+                                <div>
+                                    <strong>Visit defaults</strong>
+                                    <small>Applied to each client added</small>
+                                </div>
+                            </div>
+                            <group col="2" class="fsrp-compact-group">
+                                <field name="default_visit_purpose_id" options="{'no_create_edit': True}"/>
+                                <field name="default_call_type"/>
+                                <field name="add_to_existing"/>
+                                <field name="auto_sequence"/>
+                            </group>
+                        </div>
+                    </div>
+
+                    <div class="fsrp-quick-card fsrp-client-picker-card">
+                        <div class="fsrp-card-title fsrp-card-title-row">
+                            <div class="fsrp-title-left">
+                                <span class="fsrp-card-icon">3</span>
+                                <div>
+                                    <strong>Clients to visit</strong>
+                                    <small>Choose route clients, add all route clients, and optionally include extra customers from any other route.</small>
+                                </div>
+                            </div>
+                            <field name="selection_mode" widget="radio" nolabel="1" class="fsrp-selection-pills"/>
+                        </div>
+                        <div class="fsrp-client-picker" attrs="{'invisible': [('selection_mode', '!=', 'manual')]}">
+                            <field name="partner_ids" nolabel="1" widget="many2many_tags" domain="[('route_id','=',route_id), ('customer_rank','&gt;',0)]" context="{'default_route_id': route_id, 'default_customer_rank': 1}" options="{'no_create_edit': False}" placeholder="Search and select clients assigned to this route..."/>
+                        </div>
+                        <div class="fsrp-global-client-picker" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee;">
+                            <label for="global_partner_ids" string="Add Client From Any Route"/>
+                            <field name="global_partner_ids" nolabel="1" widget="many2many_tags" domain="[('customer_rank','&gt;',0), ('active','=',True)]" options="{'no_create': True, 'no_create_edit': True}" placeholder="Search any customer. They will be added to this plan only and remain on their original route."/>
+                            <small class="text-muted">These extra clients are not reassigned to the selected market route.</small>
+                        </div>
+                        <div class="fsrp-all-route-note" attrs="{'invisible': [('selection_mode', '!=', 'all_route')]}">
+                            <strong>All active customers on this market route will be added.</strong>
+                            <span>You can remove or resequence clients after the plan is created.</span>
+                        </div>
+                    </div>
+                </sheet>
+                <footer class="fsrp-quick-footer">
+                    <button name="action_create_plan" type="object" string="Submit Route Plan for Approval" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-link"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_quick_route_plan_wizard" model="ir.actions.act_window">
+        <field name="name">Quick Route Plan</field>
+        <field name="res_model">sales.route.quick.plan.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

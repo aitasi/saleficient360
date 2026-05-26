@@ -1,0 +1,38 @@
+<odoo>
+    <record id="view_route_plan_add_client_wizard_form" model="ir.ui.view">
+        <field name="name">sales.route.plan.add.client.wizard.form</field>
+        <field name="model">sales.route.plan.add.client.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Add Client to Today's Route">
+                <group>
+                    <field name="plan_id"/>
+                    <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                    <field name="user_id"/>
+                    <field name="add_mode" widget="radio"/>
+                </group>
+                <group attrs="{'invisible': [('add_mode', '!=', 'existing')]}">
+                    <field name="partner_id" context="{'default_customer_rank': 1, 'default_user_id': user_id}" options="{'no_create_edit': False, 'no_create': False}"/>
+                </group>
+                <group attrs="{'invisible': [('add_mode', '!=', 'new')]}">
+                    <field name="name"/>
+                    <field name="phone"/>
+                    <field name="mobile"/>
+                    <field name="street"/>
+                    <field name="city"/>
+                </group>
+                <group>
+                    <field name="expected_visit_purpose_id"/>
+                    <field name="expected_call_type"/>
+                    <field name="assign_to_route"/>
+                    <field name="start_visit_after_add" invisible="1"/>
+                    <div class="text-muted">Untick route assignment when Sales Person A is only serving a customer from another route. The original route owner remains unchanged.</div>
+                </group>
+                <footer>
+                    <button name="action_add_client" string="Add Client &amp; Start Visit" type="object" class="btn-primary" attrs="{'invisible': [('start_visit_after_add', '=', False)]}"/>
+                    <button name="action_add_client" string="Add Client to Route Plan" type="object" class="btn-primary" attrs="{'invisible': [('start_visit_after_add', '=', True)]}"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

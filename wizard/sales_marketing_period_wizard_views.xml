@@ -1,0 +1,27 @@
+<odoo>
+    <record id="view_sales_marketing_period_wizard_form" model="ir.ui.view">
+        <field name="name">sales.marketing.period.wizard.form</field>
+        <field name="model">sales.marketing.period.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Select Sales / Marketing Period">
+                <group>
+                    <field name="period_selection"/>
+                    <field name="period_year" attrs="{'invisible': [('period_selection','=','custom')]}"/>
+                    <field name="custom_date_from" attrs="{'invisible': [('period_selection','!=','custom')], 'required': [('period_selection','=','custom')]}"/>
+                    <field name="custom_date_to" attrs="{'invisible': [('period_selection','!=','custom')], 'required': [('period_selection','=','custom')]}"/>
+                </group>
+                <footer>
+                    <button name="action_apply_to_profiles" type="object" string="Apply Period" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_sales_marketing_period_wizard" model="ir.actions.act_window">
+        <field name="name">Select Sales / Marketing Period</field>
+        <field name="res_model">sales.marketing.period.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

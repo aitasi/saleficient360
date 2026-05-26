@@ -1,0 +1,33 @@
+<odoo>
+    <record id="view_auto_route_assignment_wizard_form" model="ir.ui.view">
+        <field name="name">sales.route.auto.assignment.wizard.form</field>
+        <field name="model">sales.route.auto.assignment.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Generate Daily Auto Route Plans">
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        The system will select customers using route assignment, daily route rotation, visit frequency, recently missed calls, inactive/no-purchase customers, key/high-potential classification and sales potential.
+                    </div>
+                    <group>
+                        <field name="plan_date"/>
+                        <field name="user_ids" widget="many2many_tags"/>
+                        <field name="max_clients"/>
+                        <field name="approve"/>
+                        <field name="overwrite"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_generate" string="Generate Auto Routes" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_auto_route_assignment_wizard" model="ir.actions.act_window">
+        <field name="name">Generate Auto Route Plans</field>
+        <field name="res_model">sales.route.auto.assignment.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

@@ -1,0 +1,29 @@
+<odoo>
+    <record id="view_sales_route_visit_purpose_wizard_form" model="ir.ui.view">
+        <field name="name">sales.route.visit.purpose.wizard.form</field>
+        <field name="model">sales.route.visit.purpose.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Choose Visit Purpose">
+                <sheet>
+                    <div class="oe_title">
+                        <h2>Choose what this visit is for</h2>
+                    </div>
+                    <group>
+                        <field name="plan_line_id" invisible="1"/>
+                        <field name="partner_id"/>
+                        <field name="route_id" options="{'no_create': True, 'no_create_edit': True}"/>
+                        <field name="visit_purpose_id" options="{'no_create': False, 'no_create_edit': False}"/>
+                        <field name="visit_purpose" invisible="1"/>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        Marketing opens the quick marketing capture first. Sales, Delivery, Merchandising, Retail Sales, and other visit purposes open the visit form for check-in and relevant work.
+                    </div>
+                </sheet>
+                <footer>
+                    <button name="action_proceed" type="object" string="Proceed" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
